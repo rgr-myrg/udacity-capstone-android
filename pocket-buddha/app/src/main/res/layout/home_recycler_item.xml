@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<android.support.v7.widget.CardView-->
+	<!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+	<!--android:layout_width="match_parent"-->
+	<!--android:layout_height="wrap_content">-->
+
+	<!--<LinearLayout-->
+		<!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+		<!--android:layout_width="wrap_content"-->
+		<!--android:layout_height="wrap_content"-->
+		<!--android:background="@android:color/white"-->
+		<!--android:orientation="vertical">-->
+
+		<!--<ImageView-->
+			<!--android:id="@+id/item_image"-->
+			<!--android:layout_width="match_parent"-->
+			<!--android:layout_height="wrap_content"-->
+			<!--android:layout_gravity="center"-->
+			<!--android:scaleType="centerCrop"-->
+			<!--android:src="@drawable/ic_menu_camera"/>-->
+		<!--<TextView-->
+			<!--android:id="@+id/item_title"-->
+			<!--android:layout_width="match_parent"-->
+			<!--android:layout_height="wrap_content"-->
+			<!--android:gravity="center"-->
+			<!--android:text="caption"/>-->
+	<!--</LinearLayout>-->
+<!--</android.support.v7.widget.CardView>-->
+<android.support.v7.widget.CardView
+	xmlns:card_view="http://schemas.android.com/apk/res-auto"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/home_recycler_item_card_view"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+    card_view:cardUseCompatPadding="true"
+	card_view:cardElevation="11dp"
+	android:elevation="11dp"
+	android:layout_marginBottom="0dp">
+
+	<LinearLayout
+		android:id="@+id/home_recycler_item_container"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@android:color/white"
+		android:orientation="vertical">
+
+		<ImageView
+			android:id="@+id/item_image"
+			android:layout_width="match_parent"
+			android:layout_height="200dp"
+			android:contentDescription="@string/content_image_description"
+			android:scaleType="centerCrop" />
+
+		<TextView
+			android:id="@+id/item_title"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/item_image"
+            android:layout_alignParentBottom="true"
+			android:paddingBottom="9dp"
+			android:paddingTop="9dp"
+			android:gravity="center_horizontal"
+			android:background="#1976D2"
+            android:textStyle="bold"
+            style="@style/Base.TextAppearance.AppCompat.Large.Inverse"/>
+
+	</LinearLayout>
+
+</android.support.v7.widget.CardView>

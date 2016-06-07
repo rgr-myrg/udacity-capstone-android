@@ -5,8 +5,12 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by home on 6/6/16.
@@ -112,6 +116,19 @@ public class FeedItemDTO implements Parcelable {
 		values.put(FAVORITE_KEY, favorite);
 
 		return values;
+	}
+
+	public static List<FeedItemDTO> fromJsonStringAsList(final String jsonString) throws JSONException {
+		final List<FeedItemDTO> list = new ArrayList<>();
+		final JSONArray jsonArray = new JSONArray(jsonString);
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			list.add(
+					fromJsonObject(jsonArray.getJSONObject(i))
+			);
+		}
+
+		return list;
 	}
 
 	public static FeedItemDTO fromJsonObject(final JSONObject jsonObject) {

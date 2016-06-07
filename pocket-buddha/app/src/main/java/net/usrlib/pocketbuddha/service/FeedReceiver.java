@@ -11,7 +11,6 @@ import android.support.v4.os.ResultReceiver;
 @SuppressLint("ParcelCreator")
 public class FeedReceiver extends ResultReceiver {
 	public static final String NAME = FeedReceiver.class.getSimpleName();
-	public static final String DATA = "data";
 
 	private OnReceiveResult mCallback;
 

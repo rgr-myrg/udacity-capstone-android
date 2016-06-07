@@ -1,31 +1,20 @@
 <resources>
 	<string name="app_name">Pocket Buddha</string>
 	<string name="activity_favorites">Favorites</string>
-    <string name="activity_detail"></string>
-    <string name="activity_search_results">Search Results</string>
-
+	<string name="activity_detail"></string>
+	<string name="activity_search_results">Search Results</string>
 
 	<string name="share_footer_text">
 		Shared from my Pocket Buddha App.
 	</string>
-	<!--<string name="daily_words_saved_msg">Bookmark added!</string>-->
-	<!--<string name="daily_words_not_saved_msg">Oops! Something went awry.</string>-->
 
 	<!--Menu Item Labels-->
 	<string name="action_home">Home</string>
 	<string name="action_favorites">Favorites</string>
-    <string name="action_search">Search</string>
-
-    <!--<string name="action_favorites_by_date">Favorites: By Date</string>-->
-	<!--<string name="action_favorites_by_title">Favorites: By Title</string>-->
-
-	<!--<string name="action_profile">Profile</string>-->
-	<!--<string name="action_refresh">Refresh</string>-->
-	<!--<string name="action_settings">Settings</string>-->
+	<string name="action_search">Search</string>
 
 	<string name="navigation_drawer_open">Open navigation drawer</string>
 	<string name="navigation_drawer_close">Close navigation drawer</string>
-	<!--<string name="title_activity_bookmark">BookmarkActivity</string>-->
 
 	<string name="home_drawer_contribute_group">Contribute</string>
 	<string name="home_drawer_contribute_donate">Make a Donation</string>
@@ -35,12 +24,18 @@
 	<string name="msg_favorite_success">Added to Favorites!</string>
 	<string name="msg_favorite_removed">Removed from Favorites.</string>
 	<string name="msg_db_error">Annicca, Annicca. Unexpected error.</string>
-    <string name="msg_play_error">Unable to play file at this time.</string>
+	<string name="msg_play_error">Unable to play file at this time.</string>
 
 	<string name="content_image_description">Captivating Buddhist Image</string>
-    <string name="search_suggest_authority">net.usrlib.android.pocketbuddha.data.search</string>
-    <string name="search_suggest_intent_data">
-        content://net.usrlib.android.pocketbuddha.data.search.city
+	<string name="search_suggest_authority">net.usrlib.android.pocketbuddha.data.search</string>
+	<string name="search_suggest_intent_data">
+		content://net.usrlib.android.pocketbuddha.data.search.city
+	</string>
+
+    <string name="splash_screen_startup_msg">Loading Data...</string>
+    <string name="splash_screen_finished_msg">Finishing Set Up...</string>
+    <string name="splash_screen_error_msg">
+        Unable to complete set up! Please check your network connection.
     </string>
 
 </resources>

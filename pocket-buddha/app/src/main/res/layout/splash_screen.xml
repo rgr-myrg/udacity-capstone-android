@@ -8,13 +8,23 @@
 	android:gravity="center">
 
 	<ImageView
-		android:layout_width="275dp"
-		android:layout_height="275dp"
+		android:layout_width="@dimen/splash_screen_image_size"
+		android:layout_height="@dimen/splash_screen_image_size"
 		android:src="@drawable/happy_monk_275x275"/>
+
 	<TextView
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:gravity="center"
 		android:text="One peaceful moment."
 		style="@style/Base.TextAppearance.AppCompat.Headline"/>
+
+	<TextView
+		android:id="@+id/splash_screen_progress_msg"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:text="@string/splash_screen_startup_msg"
+		style="@style/Base.TextAppearance.AppCompat.Small"/>
+
 </LinearLayout>

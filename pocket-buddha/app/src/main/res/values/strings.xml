@@ -3,6 +3,7 @@
 	<string name="activity_favorites">Favorites</string>
 	<string name="activity_detail"></string>
 	<string name="activity_search_results">Search Results</string>
+	<string name="activity_about">About</string>
 
 	<string name="share_footer_text">
 		Shared from my Pocket Buddha App.
@@ -17,7 +18,7 @@
 	<string name="navigation_drawer_close">Close navigation drawer</string>
 
 	<string name="home_drawer_contribute_group">Contribute</string>
-	<string name="home_drawer_contribute_donate">Make a Donation</string>
+	<string name="home_drawer_about">About</string>
 	<string name="home_drawer_contribute_view_ad">Watch a Video Ad</string>
 	<string name="home_drawer_contribute_invitation">Send an Invite</string>
 
@@ -27,15 +28,18 @@
 	<string name="msg_play_error">Unable to play file at this time.</string>
 
 	<string name="content_image_description">Captivating Buddhist Image</string>
-	<string name="search_suggest_authority">net.usrlib.android.pocketbuddha.data.search</string>
-	<string name="search_suggest_intent_data">
-		content://net.usrlib.android.pocketbuddha.data.search.city
+	<string name="search_authority">net.usrlib.pocketbuddha.provider.search</string>
+	<string name="search_intent_data">
+		content://net.usrlib.pocketbuddha.provider.city
 	</string>
 
-    <string name="splash_screen_startup_msg">Loading Data...</string>
-    <string name="splash_screen_finished_msg">Finishing Set Up...</string>
-    <string name="splash_screen_error_msg">
-        Unable to complete set up! Please check your network connection.
-    </string>
+    <string name="splash_screen_welcome_msg">One peaceful moment.</string>
+	<string name="splash_screen_startup_msg">Updating...</string>
+    <string name="splash_screen_progress_msg">Smile more...</string>
+	<string name="splash_screen_finished_msg">Finishing...</string>
+	<string name="splash_screen_error_msg">
+		Unable to complete set up! Please check your network connection.
+	</string>
 
+	<string name="ad_banner_unit_id">ca-app-pub-7237046001480876/6588891069</string>
 </resources>

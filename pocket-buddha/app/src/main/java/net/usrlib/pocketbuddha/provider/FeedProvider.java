@@ -22,10 +22,11 @@ public class FeedProvider extends ContentProvider {
 
 	public static final int ITEMS = 100;
 	public static final int ITEMS_BULK_INSERT = 101;
-	public static final int ITEMS_WITH_FAVORITES_BY_TITLE_ASC  = 102;
-	public static final int ITEMS_WITH_FAVORITES_BY_TITLE_DESC = 103;
-	public static final int ITEMS_WITH_FAVORITES_BY_DATE_ASC   = 104;
-	public static final int ITEMS_WITH_FAVORITES_BY_DATE_DESC  = 105;
+	public static final int ITEM_UPDATE = 102;
+	public static final int FAVORITES_BY_TITLE_ASC = 103;
+	public static final int FAVORITES_BY_TITLE_DESC = 104;
+	public static final int FAVORITES_BY_DATE_ASC = 105;
+	public static final int FAVORITES_BY_DATE_DESC = 106;
 
 	private static final UriMatcher sUriMatcher = buildUriMatcher();
 
@@ -50,16 +51,16 @@ public class FeedProvider extends ContentProvider {
 			case ITEMS:
 				cursor = dbHelper.selectAll();
 				break;
-			case ITEMS_WITH_FAVORITES_BY_TITLE_ASC:
+			case FAVORITES_BY_TITLE_ASC:
 				cursor = dbHelper.selectFavoritesByTitleAsc();
 				break;
-			case ITEMS_WITH_FAVORITES_BY_TITLE_DESC:
+			case FAVORITES_BY_TITLE_DESC:
 				cursor = dbHelper.selectFavoritesByTitleDesc();
 				break;
-			case ITEMS_WITH_FAVORITES_BY_DATE_ASC:
+			case FAVORITES_BY_DATE_ASC:
 				cursor = dbHelper.selectFavoritesByDateAsc();
 				break;
-			case ITEMS_WITH_FAVORITES_BY_DATE_DESC:
+			case FAVORITES_BY_DATE_DESC:
 				cursor = dbHelper.selectFavoritesByDateDesc();
 				break;
 
@@ -76,7 +77,7 @@ public class FeedProvider extends ContentProvider {
 			case ITEMS:
 				return FeedContract.ItemsEntry.CONTENT_TYPE;
 
-			case ITEMS_WITH_FAVORITES_BY_TITLE_ASC:
+			case FAVORITES_BY_TITLE_ASC:
 				return FeedContract.ItemsEntry.CONTENT_TYPE;
 
 			default:
@@ -96,15 +97,43 @@ public class FeedProvider extends ContentProvider {
 	}
 
 	@Override
-	public synchronized int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-		final int match = sUriMatcher.match(uri);
-		return 0;
+	public synchronized int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
+		int rowUpdated = 0;
+		final int uriType = sUriMatcher.match(uri);
+
+		String table = null;
+
+		switch (uriType) {
+			case ITEM_UPDATE:
+				table = FeedContract.ItemsEntry.TABLE_NAME_ITEMS;
+				break;
+		}
+
+		final DbHelper dbHelper = DbHelper.getInstance(getContext());
+		final SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+		db.beginTransaction();
+
+		try {
+			rowUpdated = db.update(table, values, where, whereArgs);
+
+//			if (rowUpdated <= 0) {
+//				throw new SQLException("Failed to update row into " + table);
+//			}
+
+			db.setTransactionSuccessful();
+
+		} finally {
+			db.endTransaction();
+		}
+
+		return rowUpdated;
 	}
 
 	@Override
 	public int bulkInsert(Uri uri, ContentValues[] values) throws SQLException {
-		int newRowsInserted = 0;
-		int uriType = sUriMatcher.match(uri);
+		int rowsInserted = 0;
+		final int uriType = sUriMatcher.match(uri);
 
 		String table = null;
 
@@ -114,28 +143,28 @@ public class FeedProvider extends ContentProvider {
 				break;
 		}
 
-		DbHelper dbHelper = DbHelper.getInstance(getContext());
-		SQLiteDatabase sqlDB = dbHelper.getWritableDatabase();
+		final DbHelper dbHelper = DbHelper.getInstance(getContext());
+		final SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-		sqlDB.beginTransaction();
+		db.beginTransaction();
 
 		try {
 			for (ContentValues item : values) {
-				long newID = sqlDB.insertOrThrow(table, null, item);
+				long newID = db.insertOrThrow(table, null, item);
 
 				if (newID <= 0) {
-					throw new SQLException("Failed to insert row into " + uri);
+					throw new SQLException("Failed to insert row into " + table);
 				}
 			}
 
-			sqlDB.setTransactionSuccessful();
-			newRowsInserted = values.length;
+			db.setTransactionSuccessful();
+			rowsInserted = values.length;
 
 		} finally {
-			sqlDB.endTransaction();
+			db.endTransaction();
 		}
 
-		return newRowsInserted;
+		return rowsInserted;
 	}
 
 	public static UriMatcher buildUriMatcher() {
@@ -144,7 +173,10 @@ public class FeedProvider extends ContentProvider {
 
 		matcher.addURI(authority, FeedContract.PATH_ITEMS, ITEMS);
 		matcher.addURI(authority, FeedContract.PATH_BULK_INSERT, ITEMS_BULK_INSERT);
-		matcher.addURI(authority, FeedContract.PATH_ITEMS_WITH_FAVORITES + "/*", ITEMS_WITH_FAVORITES_BY_TITLE_ASC);
+		matcher.addURI(authority, FeedContract.PATH_ITEM_UPDATE, ITEM_UPDATE);
+		matcher.addURI(authority, FeedContract.PATH_FAVORITES, FAVORITES_BY_DATE_DESC);
+
+		//matcher.addURI(authority, FeedContract.PATH_FAVORITES + "/*", FAVORITES_BY_TITLE_ASC);
 
 		return matcher;
 	}

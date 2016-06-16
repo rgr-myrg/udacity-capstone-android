@@ -181,36 +181,36 @@ public class DbHelper extends SQLiteOpenHelper {
 //		callback.onTransactionSuccess(arrayList);
 //	}
 
-	public void bulkInsertItems(final List<FeedItemDTO> items,
-	                            final OnTransactionComplete callback) {
-		final SQLiteDatabase db = getWritableDatabase();
-		long newRowId = -1;
-
-		if (db == null || items == null) {
-			callback.onError();
-			return;
-		}
-
-		db.beginTransaction();
-
-		try {
-			for (FeedItemDTO item : items) {
-				newRowId = db.insert(TABLE_NAME, null, item.toContentValues());
-			}
-
-			db.setTransactionSuccessful();
-		} finally {
-			db.endTransaction();
-		}
-
-		final boolean success = newRowId != -1;
-
-		if (success) {
-			callback.onSuccess(newRowId);
-		} else {
-			callback.onError();
-		}
-	}
+//	public void bulkInsertItems(final List<FeedItemDTO> items,
+//	                            final OnTransactionComplete callback) {
+//		final SQLiteDatabase db = getWritableDatabase();
+//		long newRowId = -1;
+//
+//		if (db == null || items == null) {
+//			callback.onError();
+//			return;
+//		}
+//
+//		db.beginTransaction();
+//
+//		try {
+//			for (FeedItemDTO item : items) {
+//				newRowId = db.insert(TABLE_NAME, null, item.toContentValues());
+//			}
+//
+//			db.setTransactionSuccessful();
+//		} finally {
+//			db.endTransaction();
+//		}
+//
+//		final boolean success = newRowId != -1;
+//
+//		if (success) {
+//			callback.onSuccess(newRowId);
+//		} else {
+//			callback.onError();
+//		}
+//	}
 
 	public boolean updateFavoriteColumn(final FeedItemDTO feedItemDTO,
 	                                    final OnTransactionComplete callback) {
@@ -257,7 +257,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		return success;
 	}
 
-//	public boolean removeFavorite(final FeedItemDTO feedItemDTO, final TransactionEvent callback) {
+//	public boolean removeFavorite(final FeedItemDTO feedItemDTO, final ViewTransaction callback) {
 //		final SQLiteDatabase db = getWritableDatabase();
 //
 //		if (db == null || feedItemDTO == null) {

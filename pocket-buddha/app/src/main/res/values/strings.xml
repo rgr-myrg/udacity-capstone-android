@@ -24,7 +24,7 @@
 
 	<string name="msg_favorite_success">Added to Favorites!</string>
 	<string name="msg_favorite_removed">Removed from Favorites.</string>
-	<string name="msg_db_error">Annicca, Annicca. Unexpected error.</string>
+	<string name="msg_db_error">Oops! Something went awry!</string>
 	<string name="msg_play_error">Unable to play file at this time.</string>
 
 	<string name="content_image_description">Captivating Buddhist Image</string>

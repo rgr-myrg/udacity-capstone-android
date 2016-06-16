@@ -1,6 +1,7 @@
 package net.usrlib.pocketbuddha.view;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -10,14 +11,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import net.usrlib.pocketbuddha.R;
-import net.usrlib.pocketbuddha.presenter.Presenter;
+import net.usrlib.pocketbuddha.mvp.MvpPresenter;
+import net.usrlib.pocketbuddha.mvp.MvpView;
 
 /**
  * Created by rgr-myrg on 6/6/16.
  */
-public class SplashScreenActivity extends AppCompatActivity
-		implements Presenter.TransactionEvent {
-
+public class SplashScreenActivity extends AppCompatActivity implements MvpView {
 	private TextView mMessageTextView;
 
 	@Override
@@ -27,7 +27,7 @@ public class SplashScreenActivity extends AppCompatActivity
 
 		mMessageTextView = (TextView) findViewById(R.id.splash_screen_message_textview);
 
-		Presenter.getInstance().requestFeedService(this);
+		MvpPresenter.getInstance().requestFeedService(this);
 
 		Glide.with(this)
 				.load(R.drawable.happy_monk_275x275)
@@ -35,30 +35,48 @@ public class SplashScreenActivity extends AppCompatActivity
 	}
 
 	@Override
-	public void onTransactionSuccess(Presenter.TransactionType type, Bundle bundle) {
+	public void onTransactionSuccess(MvpPresenter.TransactionType type, Bundle bundle) {
 		switch (type) {
 			case FEED_SERVICE:
-				Presenter.getInstance().requestDbBulkInsert(this, bundle);
+				MvpPresenter.getInstance().requestDbBulkInsert(this, bundle);
 				break;
 
 			case DB_BULK_INSERT:
-				displayMessage(R.string.splash_screen_finished_msg);
 				onDbBulkInsertComplete();
 				break;
 		}
 	}
 
 	@Override
-	public void onTransactionProgress(Presenter.TransactionType type) {
-		displayMessage(R.string.splash_screen_progress_msg);
+	public void onTransactionProgress(MvpPresenter.TransactionType type) {
+//		switch (type) {
+//			case FEED_SERVICE:
+//				Glide.with(this)
+//						.load(R.drawable.happy_monk_275x275)
+//						.into(((ImageView) findViewById(R.id.splash_screen_imageview)));
+//				break;
+//
+//			case DB_BULK_INSERT:
+//				displayMessage(R.string.splash_screen_progress_msg);
+//				break;
+//		}
+		if (type == MvpPresenter.TransactionType.DB_BULK_INSERT) {
+			displayMessage(R.string.splash_screen_progress_msg);
+		}
 	}
 
 	@Override
-	public void onTransactionError(Presenter.TransactionType type) {
+	public void onTransactionError(MvpPresenter.TransactionType type) {
 		displayMessage(R.string.splash_screen_error_msg);
 	}
 
+	@Override
+	public void onTransactionCursorReady(Cursor cursor) {
+	}
+
 	private void onDbBulkInsertComplete() {
+		displayMessage(R.string.splash_screen_finished_msg);
+
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {

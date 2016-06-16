@@ -118,14 +118,26 @@ public class FeedItemDTO implements Parcelable {
 		return values;
 	}
 
-	public static List<FeedItemDTO> fromJsonStringAsList(final String jsonString) throws JSONException {
-		final List<FeedItemDTO> list = new ArrayList<>();
-		final JSONArray jsonArray = new JSONArray(jsonString);
+//	public static List<FeedItemDTO> fromJsonStringAsList(final String jsonString) throws JSONException {
+//		final List<FeedItemDTO> list = new ArrayList<>();
+//		final JSONArray jsonArray = new JSONArray(jsonString);
+//
+//		for (int i = 0; i < jsonArray.length(); i++) {
+//			list.add(
+//					fromJsonObject(jsonArray.getJSONObject(i))
+//			);
+//		}
+//
+//		return list;
+//	}
+
+	public static ContentValues[] fromJsonStringAsContentValues(final String jsonString)
+			throws JSONException {
+		final JSONArray jsonArray  = new JSONArray(jsonString);
+		final ContentValues[] list = new ContentValues[jsonArray.length()];
 
 		for (int i = 0; i < jsonArray.length(); i++) {
-			list.add(
-					fromJsonObject(jsonArray.getJSONObject(i))
-			);
+			list[i] = fromJsonObject(jsonArray.getJSONObject(i)).toContentValues();
 		}
 
 		return list;

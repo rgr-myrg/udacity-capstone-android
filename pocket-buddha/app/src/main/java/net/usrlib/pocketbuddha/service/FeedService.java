@@ -12,7 +12,7 @@ import net.usrlib.pocketbuddha.util.HttpResponse;
  * Created by rgr-myrg on 6/6/16.
  */
 public class FeedService extends IntentService {
-	public static final String URL = BuildConfig.FEED_PAGER_END_POINT + "?pg=1";
+	public static final String URL = BuildConfig.FEED_PAGER_END_POINT + "?pg=all";
 
 	public static final String COMMAND_KEY   = "command";
 	public static final String FETCH_COMMAND = "fetch";

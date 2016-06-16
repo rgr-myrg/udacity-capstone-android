@@ -1,13 +1,14 @@
 package net.usrlib.pocketbuddha.data;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import net.usrlib.pocketbuddha.model.FeedItemDTO;
+import net.usrlib.pocketbuddha.provider.FeedContract;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,28 +19,41 @@ public class DbHelper extends SQLiteOpenHelper {
 	public static final int DB_VERSION = 1;
 	public static final String TABLE_NAME = "feed_items";
 	public static final String TIMESTAMP_COLUMN = "timestamp";
-	public static final String PRIMARY_ID_KEY = "_id";
+	public static final String ID_COLUMN = "_id";
+
 	public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS "
 			+ TABLE_NAME
 			+ "("
-			+ PRIMARY_ID_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-			+ FeedItemDTO.TITLE_KEY + " TEXT NOT NULL,"
-			+ FeedItemDTO.PALI_KEY + " TEXT NOT NULL,"
-			+ FeedItemDTO.ENGLISH_KEY + " TEXT NOT NULL,"
-			+ FeedItemDTO.MP3_LINK_KEY + " TEXT NOT NULL,"
-			+ FeedItemDTO.IMAGE_URL_KEY + " TEXT NOT NULL,"
-			+ FeedItemDTO.AUTHOR_KEY + " TEXT,"
-			+ FeedItemDTO.SUBJECT_KEY + " TEXT,"
-			+ FeedItemDTO.FAVORITE_KEY + " INTEGER NOT NULL,"
+			+ ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+			+ FeedContract.ItemsEntry.TITLE_COLUMN     + " TEXT NOT NULL,"
+			+ FeedContract.ItemsEntry.PALI_COLUMN      + " TEXT NOT NULL,"
+			+ FeedContract.ItemsEntry.ENGLISH_COLUMN   + " TEXT NOT NULL,"
+			+ FeedContract.ItemsEntry.MP3_LINK_COLUMN  + " TEXT NOT NULL,"
+			+ FeedContract.ItemsEntry.IMAGE_URL_COLUMN + " TEXT NOT NULL,"
+			+ FeedContract.ItemsEntry.AUTHOR_COLUMN    + " TEXT,"
+			+ FeedContract.ItemsEntry.SUBJECT_COLUMN   + " TEXT,"
+			+ FeedContract.ItemsEntry.FAVORITE_COLUMN  + " INTEGER NOT NULL,"
 			+ TIMESTAMP_COLUMN + " DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
 			+ "UNIQUE (" + FeedItemDTO.TITLE_KEY + ") ON CONFLICT REPLACE"
 			+ ")";
+
 	public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
+
+	public static final String EXISTS = "SELECT name FROM sqlite_master WHERE type='table' AND name = ?";
+
 	public static final String SELECT_ALL_BY_DATE = "SELECT * FROM " + TABLE_NAME
 			+ " ORDER BY " + TIMESTAMP_COLUMN;
 
 	public static final String SELECT_ALL_BY_TITLE = "SELECT * FROM " + TABLE_NAME
-			+ " ORDER BY " + FeedItemDTO.TITLE_KEY;
+			+ " ORDER BY " + FeedContract.ItemsEntry.TITLE_COLUMN;
+
+	public static final String SELECT_FAVORITES_BY_TITLE = "SELECT * FROM " + TABLE_NAME
+			+ " WHERE " + FeedContract.ItemsEntry.FAVORITE_COLUMN + " = 1"
+			+ " ORDER BY " + FeedContract.ItemsEntry.TITLE_COLUMN;
+
+	public static final String SELECT_FAVORITES_BY_DATE = "SELECT * FROM " + TABLE_NAME
+			+ " WHERE " + FeedContract.ItemsEntry.FAVORITE_COLUMN + " = 1"
+			+ " ORDER BY " + TIMESTAMP_COLUMN;
 
 	public static final String ORDER_BY_ASC  = " ASC";
 	public static final String ORDER_BY_DESC = " DESC";
@@ -64,53 +78,111 @@ public class DbHelper extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
-	public void selectFavorites(final OnSelectComplete callback, final boolean orderByTile) {
+	public Cursor selectAll() {
 		final SQLiteDatabase db = getWritableDatabase();
 
 		if (db == null) {
-			callback.onError();
-			return;
+			return null;
 		}
 
-		final Cursor cursor = db.rawQuery(
-				orderByTile
-						? SELECT_ALL_BY_TITLE + mTitleSortOrder
-						: SELECT_ALL_BY_DATE + mDateSortOrder,
-				null
-		);
-
-		if (cursor == null) {
-			callback.onError();
-			return;
-		}
-
-		final List<FeedItemDTO> arrayList = new ArrayList<>();
-
-		if (cursor.moveToFirst()) {
-			do {
-				final FeedItemDTO feedItemDTO = FeedItemDTO.fromDbCursor(cursor);
-				arrayList.add(feedItemDTO);
-			} while (cursor.moveToNext());
-		}
-
-		cursor.close();
-
-		if (arrayList.isEmpty() && arrayList.size() == 0) {
-			callback.onError();
-			return;
-		}
-
-		// Toggle sort order for the next look up.
-		if (orderByTile) {
-			mTitleSortOrder = mTitleSortOrder.equals(ORDER_BY_ASC) ? ORDER_BY_DESC : ORDER_BY_ASC;
-		} else {
-			mDateSortOrder = mDateSortOrder.equals(ORDER_BY_ASC) ? ORDER_BY_DESC : ORDER_BY_ASC;
-		}
-
-		callback.onSuccess(arrayList);
+		/*
+		SELECT *
+		FROM MyTable
+		WHERE SomeColumn > LastValue
+		ORDER BY SomeColumn
+		LIMIT 100
+		 */
+		return db.rawQuery(SELECT_ALL_BY_TITLE, null);
 	}
 
-	public void bulkInsertItems(final List<FeedItemDTO> items, final OnTransactionComplete callback) {
+	public Cursor selectFavoritesByTitleAsc() {
+		final SQLiteDatabase db = getWritableDatabase();
+
+		if (db == null) {
+			return null;
+		}
+
+		return db.rawQuery(SELECT_FAVORITES_BY_TITLE + ORDER_BY_ASC, null);
+	}
+
+	public Cursor selectFavoritesByTitleDesc() {
+		final SQLiteDatabase db = getWritableDatabase();
+
+		if (db == null) {
+			return null;
+		}
+
+		return db.rawQuery(SELECT_FAVORITES_BY_TITLE + ORDER_BY_DESC, null);
+	}
+
+	public Cursor selectFavoritesByDateAsc() {
+		final SQLiteDatabase db = getWritableDatabase();
+
+		if (db == null) {
+			return null;
+		}
+
+		return db.rawQuery(SELECT_FAVORITES_BY_DATE + ORDER_BY_ASC, null);
+	}
+
+	public Cursor selectFavoritesByDateDesc() {
+		final SQLiteDatabase db = getWritableDatabase();
+
+		if (db == null) {
+			return null;
+		}
+
+		return db.rawQuery(SELECT_FAVORITES_BY_DATE + ORDER_BY_DESC, null);
+	}
+
+//	public void selectFavoritesBK(final OnSelectComplete callback, final boolean orderByTile) {
+//		final SQLiteDatabase db = getWritableDatabase();
+//
+//		if (db == null) {
+//			callback.onTransactionError();
+//			return;
+//		}
+//
+//		final Cursor cursor = db.rawQuery(
+//				orderByTile
+//						? SELECT_ALL_BY_TITLE + mTitleSortOrder
+//						: SELECT_ALL_BY_DATE + mDateSortOrder,
+//				null
+//		);
+//
+//		if (cursor == null) {
+//			callback.onTransactionError();
+//			return;
+//		}
+//
+//		final List<FeedItemDTO> arrayList = new ArrayList<>();
+//
+//		if (cursor.moveToFirst()) {
+//			do {
+//				final FeedItemDTO feedItemDTO = FeedItemDTO.fromDbCursor(cursor);
+//				arrayList.add(feedItemDTO);
+//			} while (cursor.moveToNext());
+//		}
+//
+//		cursor.close();
+//
+//		if (arrayList.isEmpty() && arrayList.size() == 0) {
+//			callback.onTransactionError();
+//			return;
+//		}
+//
+//		// Toggle sort order for the next look up.
+//		if (orderByTile) {
+//			mTitleSortOrder = mTitleSortOrder.equals(ORDER_BY_ASC) ? ORDER_BY_DESC : ORDER_BY_ASC;
+//		} else {
+//			mDateSortOrder = mDateSortOrder.equals(ORDER_BY_ASC) ? ORDER_BY_DESC : ORDER_BY_ASC;
+//		}
+//
+//		callback.onTransactionSuccess(arrayList);
+//	}
+
+	public void bulkInsertItems(final List<FeedItemDTO> items,
+	                            final OnTransactionComplete callback) {
 		final SQLiteDatabase db = getWritableDatabase();
 		long newRowId = -1;
 
@@ -130,6 +202,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		} finally {
 			db.endTransaction();
 		}
+
 		final boolean success = newRowId != -1;
 
 		if (success) {
@@ -139,7 +212,8 @@ public class DbHelper extends SQLiteOpenHelper {
 		}
 	}
 
-	public boolean addFavorite(final FeedItemDTO feedItemDTO, final OnTransactionComplete callback) {
+	public boolean updateFavoriteColumn(final FeedItemDTO feedItemDTO,
+	                                    final OnTransactionComplete callback) {
 		final SQLiteDatabase db = getWritableDatabase();
 
 		if (db == null || feedItemDTO == null) {
@@ -149,41 +223,28 @@ public class DbHelper extends SQLiteOpenHelper {
 
 		db.beginTransaction();
 
-		long newRowId = -1;
+		long rowId = -1;
+
+		final ContentValues contentValues = new ContentValues();
+		contentValues.put(
+				FeedContract.ItemsEntry.FAVORITE_COLUMN,
+				feedItemDTO.isFavorite()
+		);
 
 		try {
-			newRowId = db.insert(TABLE_NAME, null, feedItemDTO.toContentValues());
+			rowId = db.update(
+					TABLE_NAME,
+					contentValues,
+					FeedItemDTO.TITLE_KEY + " = ?",
+					new String[] {
+							feedItemDTO.getTitle()
+					}
+			);
+
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
 		}
-
-		final boolean success = newRowId != -1;
-
-		if (success) {
-			callback.onSuccess(newRowId);
-		} else {
-			callback.onError();
-		}
-
-		return success;
-	}
-
-	public boolean removeFavorite(final FeedItemDTO feedItemDTO, final OnTransactionComplete callback) {
-		final SQLiteDatabase db = getWritableDatabase();
-
-		if (db == null || feedItemDTO == null) {
-			callback.onError();
-			return false;
-		}
-
-		int rowId = db.delete(
-				TABLE_NAME,
-				FeedItemDTO.TITLE_KEY + " = ?",
-				new String[]{
-						feedItemDTO.getTitle()
-				}
-		);
 
 		final boolean success = rowId != -1;
 
@@ -195,6 +256,33 @@ public class DbHelper extends SQLiteOpenHelper {
 
 		return success;
 	}
+
+//	public boolean removeFavorite(final FeedItemDTO feedItemDTO, final TransactionEvent callback) {
+//		final SQLiteDatabase db = getWritableDatabase();
+//
+//		if (db == null || feedItemDTO == null) {
+//			callback.onTransactionError();
+//			return false;
+//		}
+//
+//		int rowId = db.delete(
+//				TABLE_NAME,
+//				FeedItemDTO.TITLE_KEY + " = ?",
+//				new String[]{
+//						feedItemDTO.getTitle()
+//				}
+//		);
+//
+//		final boolean success = rowId != -1;
+//
+//		if (success) {
+//			callback.onTransactionSuccess(rowId);
+//		} else {
+//			callback.onTransactionError();
+//		}
+//
+//		return success;
+//	}
 
 	public static DbHelper getInstance(final Context context) {
 		// Use application context, to prevent accidentally leaking an Activity's context.
@@ -212,8 +300,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 
 	public interface OnSelectComplete {
-		void onSuccess(List<
-				FeedItemDTO> list);
+		void onSuccess(List<FeedItemDTO> list);
 		void onError();
 	}
 }

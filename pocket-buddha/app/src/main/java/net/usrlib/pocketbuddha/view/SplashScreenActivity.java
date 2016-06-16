@@ -16,7 +16,7 @@ import net.usrlib.pocketbuddha.presenter.Presenter;
  * Created by rgr-myrg on 6/6/16.
  */
 public class SplashScreenActivity extends AppCompatActivity
-		implements Presenter.OnTransactionComplete {
+		implements Presenter.TransactionEvent {
 
 	private TextView mMessageTextView;
 

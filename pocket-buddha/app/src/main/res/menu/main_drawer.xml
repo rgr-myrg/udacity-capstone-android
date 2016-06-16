@@ -58,9 +58,9 @@
 	<item android:title="@string/home_drawer_contribute_group">
 		<menu>
 			<item
-				android:id="@+id/nav_donate"
+				android:id="@+id/nav_about"
 				android:icon="@drawable/ic_menu_send"
-				android:title="@string/home_drawer_contribute_donate"/>
+				android:title="@string/home_drawer_about"/>
 			<item
 				android:id="@+id/nav_view_ad"
 				android:icon="@drawable/ic_videocam_black_24dp"

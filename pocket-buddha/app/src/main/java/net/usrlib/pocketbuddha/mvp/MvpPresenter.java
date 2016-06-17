@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import net.usrlib.pocketbuddha.provider.FeedContract;
 import net.usrlib.pocketbuddha.service.FeedReceiver;
@@ -109,32 +108,10 @@ public class MvpPresenter {
 	}
 
 	public void requestItemsFromDb(final AppCompatActivity app) {
-//		final MvpView mvpView = (MvpView) app;
-//		final ContentResolver contentResolver = app.getContentResolver();
-//
-//		if (contentResolver == null) {
-//			mvpView.onTransactionError(TransactionType.DB_QUERY);
-//			return;
-//		}
-//
-//		final LoaderManager loaderManager = app.getSupportLoaderManager();
-//
-//		if (loaderManager == null) {
-//			mvpView.onTransactionError(TransactionType.DB_QUERY);
-//			return;
-//		}
-//
-//		final MvpModel.LoaderHelper loaderHelper = new MvpModel.LoaderHelper(
-//				app.getApplicationContext(),
-//				FeedContract.ItemsEntry.CONTENT_URI,
-//				mvpView
-//		);
-//
-//		loaderManager.initLoader(1, null, loaderHelper);
 		requestLoaderManagerForDbQuery(app, FeedContract.ItemsEntry.CONTENT_URI);
 	}
 
-	public void requestFavoritesFromDb(final AppCompatActivity app) {
+	public void requestFavoritesFromDb(final AppCompatActivity app, final int sortBy) {
 		requestLoaderManagerForDbQuery(app, FeedContract.ItemsEntry.CONTENT_FAVORITES_URI);
 	}
 
@@ -156,7 +133,6 @@ public class MvpPresenter {
 				}
 		);
 
-		Log.d("PRESENTER", "rowCount: " + rowCount);
 		if (rowCount > 0) {
 			mvpView.onTransactionSuccess(
 					TransactionType.DB_UPDATE,

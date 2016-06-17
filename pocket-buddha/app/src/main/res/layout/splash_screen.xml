@@ -25,6 +25,6 @@
 		android:layout_height="wrap_content"
 		android:gravity="center"
 		android:text="@string/splash_screen_startup_msg"
-		style="@style/Base.TextAppearance.AppCompat.Small"/>
+		style="@style/Base.TextAppearance.AppCompat.Medium"/>
 
 </LinearLayout>

@@ -7,10 +7,11 @@
 	android:orientation="vertical">
 
 	<android.support.v7.widget.RecyclerView
-		android:id="@+id/starred_list_recycler_view"
+		android:id="@+id/favorites_list_recycler_view"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingRight="4dp"
-		android:paddingLeft="4dp"/>
+		android:paddingTop="4dp"
+		android:paddingRight="2dp"
+		android:paddingLeft="2dp"/>
 
 </LinearLayout>

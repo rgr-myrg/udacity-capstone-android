@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.chauthai.swipereveallayout.SwipeRevealLayout
-	android:id="@+id/starred_item_swipe_layout"
+	android:id="@+id/favorites_item_swipe_layout"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:paddingTop="8dp"
+	android:paddingTop="0dp"
 	app:dragEdge="right"
 	app:mode="normal">
 
@@ -21,7 +21,7 @@
 				android:orientation="vertical">
 
 				<ImageView
-					android:id="@+id/starred_item_delete_icon"
+					android:id="@+id/favorites_item_delete_icon"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:src="@drawable/ic_delete_forever_black_36dp"/>
@@ -36,10 +36,10 @@
 
 	<FrameLayout
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+		android:layout_height="wrap_content">
 
 		<include
-			layout="@layout/starred_item_card_view"
+			layout="@layout/favorites_item_card_view"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"/>
 	</FrameLayout>

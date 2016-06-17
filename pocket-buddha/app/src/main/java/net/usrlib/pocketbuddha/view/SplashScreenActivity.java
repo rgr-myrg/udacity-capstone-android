@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import net.usrlib.pocketbuddha.R;
 import net.usrlib.pocketbuddha.mvp.MvpPresenter;
 import net.usrlib.pocketbuddha.mvp.MvpView;
+import net.usrlib.pocketbuddha.util.Preferences;
 
 /**
  * Created by rgr-myrg on 6/6/16.
@@ -27,11 +28,15 @@ public class SplashScreenActivity extends AppCompatActivity implements MvpView {
 
 		mMessageTextView = (TextView) findViewById(R.id.splash_screen_message_textview);
 
-		MvpPresenter.getInstance().requestFeedService(this);
-
 		Glide.with(this)
 				.load(R.drawable.happy_monk_275x275)
 				.into(((ImageView) findViewById(R.id.splash_screen_imageview)));
+
+		if (!Preferences.hasDataInstall(getApplicationContext())) {
+			MvpPresenter.getInstance().requestFeedService(this);
+		} else {
+			onDbBulkInsertComplete();
+		}
 	}
 
 	@Override
@@ -42,6 +47,7 @@ public class SplashScreenActivity extends AppCompatActivity implements MvpView {
 				break;
 
 			case DB_BULK_INSERT:
+				Preferences.setHasDataInstall(getApplicationContext(), true);
 				onDbBulkInsertComplete();
 				break;
 		}
@@ -49,17 +55,6 @@ public class SplashScreenActivity extends AppCompatActivity implements MvpView {
 
 	@Override
 	public void onTransactionProgress(MvpPresenter.TransactionType type) {
-//		switch (type) {
-//			case FEED_SERVICE:
-//				Glide.with(this)
-//						.load(R.drawable.happy_monk_275x275)
-//						.into(((ImageView) findViewById(R.id.splash_screen_imageview)));
-//				break;
-//
-//			case DB_BULK_INSERT:
-//				displayMessage(R.string.splash_screen_progress_msg);
-//				break;
-//		}
 		if (type == MvpPresenter.TransactionType.DB_BULK_INSERT) {
 			displayMessage(R.string.splash_screen_progress_msg);
 		}

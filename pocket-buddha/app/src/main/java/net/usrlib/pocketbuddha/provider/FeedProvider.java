@@ -20,13 +20,13 @@ public class FeedProvider extends ContentProvider {
 	public static final Uri CONTENT_URI  = Uri.parse("content://" + AUTHORITY + BASE_PATH);
 	// CONTENT_URI = content://net.usrlib.pocketbuddha.provider/items
 
-	public static final int ITEMS = 100;
-	public static final int ITEMS_BULK_INSERT = 101;
-	public static final int ITEM_UPDATE = 102;
-	public static final int FAVORITES_BY_TITLE_ASC = 103;
-	public static final int FAVORITES_BY_TITLE_DESC = 104;
-	public static final int FAVORITES_BY_DATE_ASC = 105;
-	public static final int FAVORITES_BY_DATE_DESC = 106;
+//	public static final int URI_TYPE_ALL_ITEMS = 100;
+//	public static final int ITEMS_BULK_INSERT = 101;
+//	public static final int ITEM_UPDATE = 102;
+//	public static final int FAVORITES_BY_TITLE_ASC = 103;
+//	public static final int FAVORITES_BY_TITLE_DESC = 104;
+//	public static final int FAVORITES_BY_DATE_ASC = 105;
+//	public static final int FAVORITES_BY_DATE_DESC = 106;
 
 	private static final UriMatcher sUriMatcher = buildUriMatcher();
 
@@ -45,25 +45,25 @@ public class FeedProvider extends ContentProvider {
 	                                 String selection,
 	                                 String[] selectionArgs,
 	                                 String sortOrder) {
+		final int uriType = sUriMatcher.match(uri);
 		Cursor cursor = null;
 
-		switch (sUriMatcher.match(uri)) {
-			case ITEMS:
+		switch (uriType) {
+			case FeedContract.ItemsEntry.URI_TYPE_ALL_ITEMS:
 				cursor = dbHelper.selectAll();
 				break;
-			case FAVORITES_BY_TITLE_ASC:
+			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_TITLE_ASC:
 				cursor = dbHelper.selectFavoritesByTitleAsc();
 				break;
-			case FAVORITES_BY_TITLE_DESC:
+			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_TITLE_DESC:
 				cursor = dbHelper.selectFavoritesByTitleDesc();
 				break;
-			case FAVORITES_BY_DATE_ASC:
+			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_DATE_ASC:
 				cursor = dbHelper.selectFavoritesByDateAsc();
 				break;
-			case FAVORITES_BY_DATE_DESC:
+			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_DATE_DESC:
 				cursor = dbHelper.selectFavoritesByDateDesc();
 				break;
-
 		}
 
 		return cursor;
@@ -74,10 +74,10 @@ public class FeedProvider extends ContentProvider {
 	public String getType(Uri uri) {
 		final int match = sUriMatcher.match(uri);
 		switch (match) {
-			case ITEMS:
+			case FeedContract.ItemsEntry.URI_TYPE_ALL_ITEMS:
 				return FeedContract.ItemsEntry.CONTENT_TYPE;
 
-			case FAVORITES_BY_TITLE_ASC:
+			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_TITLE_ASC:
 				return FeedContract.ItemsEntry.CONTENT_TYPE;
 
 			default:
@@ -104,7 +104,7 @@ public class FeedProvider extends ContentProvider {
 		String table = null;
 
 		switch (uriType) {
-			case ITEM_UPDATE:
+			case FeedContract.ItemsEntry.URI_TYPE_ITEM_UPDATE:
 				table = FeedContract.ItemsEntry.TABLE_NAME_ITEMS;
 				break;
 		}
@@ -138,7 +138,7 @@ public class FeedProvider extends ContentProvider {
 		String table = null;
 
 		switch (uriType) {
-			case ITEMS_BULK_INSERT:
+			case FeedContract.ItemsEntry.URI_TYPE_ITEMS_BULK_INSERT:
 				table = FeedContract.ItemsEntry.TABLE_NAME_ITEMS;
 				break;
 		}
@@ -171,10 +171,10 @@ public class FeedProvider extends ContentProvider {
 		final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 		final String authority = FeedContract.CONTENT_AUTHORITY;
 
-		matcher.addURI(authority, FeedContract.PATH_ITEMS, ITEMS);
-		matcher.addURI(authority, FeedContract.PATH_BULK_INSERT, ITEMS_BULK_INSERT);
-		matcher.addURI(authority, FeedContract.PATH_ITEM_UPDATE, ITEM_UPDATE);
-		matcher.addURI(authority, FeedContract.PATH_FAVORITES, FAVORITES_BY_DATE_DESC);
+		matcher.addURI(authority, FeedContract.PATH_ITEMS, FeedContract.ItemsEntry.URI_TYPE_ALL_ITEMS);
+		matcher.addURI(authority, FeedContract.PATH_BULK_INSERT, FeedContract.ItemsEntry.URI_TYPE_ITEMS_BULK_INSERT);
+		matcher.addURI(authority, FeedContract.PATH_ITEM_UPDATE, FeedContract.ItemsEntry.URI_TYPE_ITEM_UPDATE);
+		matcher.addURI(authority, FeedContract.PATH_FAVORITES, FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_DATE_DESC);
 
 		//matcher.addURI(authority, FeedContract.PATH_FAVORITES + "/*", FAVORITES_BY_TITLE_ASC);
 

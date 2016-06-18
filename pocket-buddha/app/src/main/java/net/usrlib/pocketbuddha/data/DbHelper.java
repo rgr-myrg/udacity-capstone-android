@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import net.usrlib.pocketbuddha.model.FeedItemDTO;
 import net.usrlib.pocketbuddha.provider.FeedContract;
 
 /**
@@ -30,7 +29,7 @@ public class DbHelper extends SQLiteOpenHelper {
 			+ FeedContract.ItemsEntry.SUBJECT_COLUMN   + " TEXT,"
 			+ FeedContract.ItemsEntry.FAVORITE_COLUMN  + " INTEGER NOT NULL,"
 			+ TIMESTAMP_COLUMN + " DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
-			+ "UNIQUE (" + FeedItemDTO.TITLE_KEY + ") ON CONFLICT REPLACE"
+			+ "UNIQUE (" + FeedContract.ItemsEntry.TITLE_COLUMN + ") ON CONFLICT REPLACE"
 			+ ")";
 
 	public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;

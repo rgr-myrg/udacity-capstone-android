@@ -52,9 +52,4 @@ public class DetailAdapter extends FragmentStatePagerAdapter {
 
 		return previousCursor;
 	}
-
-//	public void updateCursor(final Cursor cursor) {
-//		this.mCursor = cursor;
-//		notifyDataSetChanged();
-//	}
 }

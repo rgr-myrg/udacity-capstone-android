@@ -3,6 +3,7 @@ package net.usrlib.pocketbuddha.view;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 	protected View mRootView = null;
 	protected DetailAdapter mPagerAdapter = null;
 	protected ViewPager mViewPager = null;
+
 	protected Cursor mCursor = null;
 	protected MvpModel mData = null;
 
@@ -55,51 +57,16 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 
 		mAdapterPosition = intent.getIntExtra(MvpModel.POSITION_KEY, 0);
 
-//		mData = getItem(position);
-//
-//		if (mData == null) {
-//			// Sum Ting Wong
-//			return;
-//		}
+		// Determine which items to request: Favorites, Search results, or All items.
+		if (intent.hasExtra(FavoritesActivity.NAME)) {
+			final Uri previousUri = MvpPresenter.getInstance().getLastDbQueryUri();
 
-//		int startingPosition = 0;
-//		if (intent.hasExtra(FavoritesAdapter.ITEM_POSITION_KEY)) {
-//			mHasFavoriteItems = true;
-//			startingPosition = intent.getIntExtra(FavoritesAdapter.ITEM_POSITION_KEY, 0);
-//			mData = AwsFeedLoader.getFeedItemsFromDb().get(startingPosition);
-//			mDataSet = AwsFeedLoader.getFeedItemsFromDb();
-//
-//		} else if(intent.hasExtra(HomeAdapter.ITEM_POSITION_KEY)) {
-//			mHasFavoriteItems = false;
-//			startingPosition = intent.getIntExtra(HomeAdapter.ITEM_POSITION_KEY, 0);
-//			mData = AwsFeedLoader.getFeedItemsFromServer().get(startingPosition);
-//			mDataSet = AwsFeedLoader.getFeedItemsFromServer();
-//
-//		} else if(intent.hasExtra(SearchResultAdapter.ITEM_POSITION_KEY)) {
-//			mHasFavoriteItems = false;
-//			startingPosition  = intent.getIntExtra(SearchResultAdapter.ITEM_POSITION_KEY, 0);
-//			mData = AwsFeedLoader.getItemsFromSearchResult().get(startingPosition);
-//			mDataSet = AwsFeedLoader.getItemsFromSearchResult();
-//		}
-
-//		MvpPresenter.getInstance().requestItemsFromDb(this, new MvpPresenter.DatabaseEvent() {
-//			@Override
-//			public void onDbCursorReady(Cursor cursor) {
-//				mCursor = cursor;
-//				mData = getItem(position);
-//				initViewPager(position, cursor);
-//			}
-//
-//			@Override
-//			public void onDbError() {
-//
-//			}
-//		});
-
-		if (intent.hasExtra(FavoritesActivity.NAME)
-				&& intent.getBooleanExtra(FavoritesActivity.NAME, false)) {
-			//TODO: Specify sort order from intent
-			MvpPresenter.getInstance().requestFavoritesSortByDateDesc(this);
+			// Retain previous query if available
+			if (previousUri != null) {
+				MvpPresenter.getInstance().requestLoaderManagerForDbQuery(this, previousUri);
+			} else {
+				MvpPresenter.getInstance().requestFavoritesSortByDateDesc(this);
+			}
 		} else {
 			MvpPresenter.getInstance().requestItemsFromDb(this);
 		}
@@ -166,7 +133,6 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 	}
 
 	public void onPlayItClicked(final View view) {
-		Log.d("onPlayItClicked", mData.getMp3Link());
 		if (mData == null) {
 			return;
 		}
@@ -222,6 +188,7 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 				mSoundPlayer.play();
 				onMp3StreamReady(view, button);
 			}
+
 			private void onSoundPlayerReady() {
 				hasLoaded = true;
 			}
@@ -230,9 +197,9 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 		button.setProgress(100, true);
 	}
 
+	// Loader Helper Callbacks
 	@Override
 	public void onTransactionProgress(MvpPresenter.TransactionType type) {
-
 	}
 
 	@Override
@@ -247,6 +214,7 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 
 		displayMessage(msgId);
 
+		//TODO: Get last transaction ???
 		// Refresh this view's data for DB_UPDATE transactions
 		MvpPresenter.getInstance().requestItemsFromDb(this);
 	}
@@ -262,12 +230,10 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 		mData = getItem(mAdapterPosition);
 
 		initViewPager(mAdapterPosition, cursor);
-//		if (mPagerAdapter == null) {
-//			initViewPager(mAdapterPosition, cursor);
-//		} else {
-//			// TODO: Investigate issue where the view does not retain the latest update
-//			//mPagerAdapter.updateCursor(cursor);
-//		}
+	}
+
+	@Override
+	public void requestTransaction(Bundle data) {
 	}
 
 	protected void initViewPager(final int position, final Cursor cursor) {
@@ -342,36 +308,6 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 
 		menu.close(true);
 	}
-
-//	protected void onUpdateFavoriteComplete(final boolean success) {
-//		final int msgId = mData.isFavorite()
-//				? R.string.msg_favorite_success
-//				: R.string.msg_favorite_removed;
-//
-//		runOnUiThread(new Runnable() {
-//			@Override
-//			public void run() {
-//				SnackbarUtil.showMessage(
-//						mRootView,
-//						getString(success ? msgId : R.string.msg_db_error)
-//				);
-//			}
-//		});
-//	}
-
-//	protected void updateAdapterDataSet() {
-//		if (!mHasFavoriteItems) {
-//			return;
-//		}
-//
-//		// If viewing favorite items it means FavoritesActivity is the parent activity
-//		// and needs it's adapter's data updated to pick up AwsFeeLoader items.
-////		final FavoritesActivity activity = FavoritesActivity.getInstance();
-////
-////		if (activity != null) {
-////			activity.updateAdapterDataSet();
-////		}
-//	}
 
 	protected String formatValueForIntent(final String value) {
 		return Html.fromHtml(value + "<br/>" + "<br/>").toString();

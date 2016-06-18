@@ -20,47 +20,57 @@ public class FeedProvider extends ContentProvider {
 	public static final Uri CONTENT_URI  = Uri.parse("content://" + AUTHORITY + BASE_PATH);
 
 	private static final UriMatcher sUriMatcher = buildUriMatcher();
-	private DbHelper dbHelper = null;
 
 	@Override
 	public synchronized boolean onCreate() {
-		dbHelper = DbHelper.getInstance(getContext());
-		return dbHelper != null;
+		return true;
 	}
 
 	@Nullable
 	@Override
 	public synchronized Cursor query(Uri uri,
-	                                 String[] projection,
-	                                 String selection,
-	                                 String[] selectionArgs,
-	                                 String sortOrder) {
+									 String[] projection,
+									 String selection,
+									 String[] selectionArgs,
+									 String sortOrder) {
 		final int uriType = sUriMatcher.match(uri);
-		Cursor cursor = null;
+		final DbHelper db = DbHelper.getInstance(getContext());
+
+		if (db == null) {
+			return null;
+		}
+
+		String sqlStr = null;
 
 		switch (uriType) {
 			case FeedContract.ItemsEntry.URI_TYPE_ALL_ITEMS:
-				cursor = dbHelper.selectAll();
+				sqlStr = DbHelper.SELECT_ALL_BY_TITLE;
 				break;
 
 			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_TITLE_ASC:
-				cursor = dbHelper.selectFavoritesByTitleAsc();
+				sqlStr = DbHelper.SELECT_FAVORITES_BY_TITLE + DbHelper.ORDER_BY_ASC;
 				break;
 
 			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_TITLE_DESC:
-				cursor = dbHelper.selectFavoritesByTitleDesc();
+				sqlStr = DbHelper.SELECT_FAVORITES_BY_TITLE + DbHelper.ORDER_BY_DESC;
 				break;
 
 			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_DATE_ASC:
-				cursor = dbHelper.selectFavoritesByDateAsc();
+				sqlStr = DbHelper.SELECT_FAVORITES_BY_DATE + DbHelper.ORDER_BY_ASC;
 				break;
 
 			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_DATE_DESC:
-				cursor = dbHelper.selectFavoritesByDateDesc();
+				sqlStr = DbHelper.SELECT_FAVORITES_BY_DATE + DbHelper.ORDER_BY_DESC;
 				break;
 		}
 
-		return cursor;
+		final SQLiteDatabase sqlLite = db.getWritableDatabase();
+
+		if (sqlLite == null || sqlStr == null) {
+			return null;
+		}
+
+		return sqlLite.rawQuery(sqlStr, null);
 	}
 
 	@Nullable
@@ -111,11 +121,6 @@ public class FeedProvider extends ContentProvider {
 
 		try {
 			rowUpdated = db.update(table, values, where, whereArgs);
-
-//			if (rowUpdated <= 0) {
-//				throw new SQLException("Failed to update row into " + table);
-//			}
-
 			db.setTransactionSuccessful();
 
 		} finally {

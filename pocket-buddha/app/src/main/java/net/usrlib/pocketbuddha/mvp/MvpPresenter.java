@@ -2,13 +2,11 @@ package net.usrlib.pocketbuddha.mvp;
 
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import net.usrlib.pocketbuddha.provider.FeedContract;
 import net.usrlib.pocketbuddha.service.FeedReceiver;
@@ -20,9 +18,12 @@ import org.json.JSONException;
  * Created by rgr-myrg on 6/7/16.
  */
 public class MvpPresenter {
+	public static final String TRANSACTION_TYPE_KEY = "transactionType";
+
 	private static MvpPresenter sInstance = null;
 	private FeedReceiver mFeedReceiver = null;
-	private Cursor mSelectAllDbCursor  = null;
+	private boolean mHasInitLoader = false;
+	private Uri mLastDbQueryUri = null;
 
 	public static final MvpPresenter getInstance() {
 		if (sInstance == null) {
@@ -30,6 +31,10 @@ public class MvpPresenter {
 		}
 
 		return sInstance;
+	}
+
+	public Uri getLastDbQueryUri() {
+		return mLastDbQueryUri;
 	}
 
 	public void requestFeedService(final AppCompatActivity app) {
@@ -166,22 +171,17 @@ public class MvpPresenter {
 		}
 	}
 
-	public static enum TransactionType {
-		FEED_SERVICE,
-		DB_BULK_INSERT,
-		DB_QUERY,
-		DB_UPDATE
-	}
-
-	private void requestLoaderManagerForDbQuery(final AppCompatActivity app, final Uri uri) {
-		Log.d("PRESENTER", "DB Request Uri:" + uri.toString());
+	public void requestLoaderManagerForDbQuery(final AppCompatActivity app, final Uri uri) {
 		final MvpView mvpView = (MvpView) app;
 		final ContentResolver contentResolver = app.getContentResolver();
 
-		if (contentResolver == null) {
+		if (contentResolver == null || uri == null) {
 			mvpView.onTransactionError(TransactionType.DB_QUERY);
 			return;
 		}
+
+		// Save last Uri in case we need to repeat the query in a diff activity
+		mLastDbQueryUri = uri;
 
 		final LoaderManager loaderManager = app.getSupportLoaderManager();
 
@@ -196,6 +196,19 @@ public class MvpPresenter {
 				mvpView
 		);
 
-		loaderManager.initLoader(1, null, loaderHelper);
+		if (!mHasInitLoader) {
+			loaderManager.initLoader(1, null, loaderHelper);
+			mHasInitLoader = true;
+			return;
+		}
+
+		loaderManager.restartLoader(1, null, loaderHelper);
+	}
+
+	public static enum TransactionType {
+		FEED_SERVICE,
+		DB_BULK_INSERT,
+		DB_QUERY,
+		DB_UPDATE
 	}
 }

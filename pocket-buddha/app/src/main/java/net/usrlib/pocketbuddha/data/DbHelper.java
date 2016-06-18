@@ -1,16 +1,11 @@
 package net.usrlib.pocketbuddha.data;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import net.usrlib.pocketbuddha.model.FeedItemDTO;
 import net.usrlib.pocketbuddha.provider.FeedContract;
-
-import java.util.List;
 
 /**
  * Created by rgr-myrg on 5/26/16.
@@ -61,9 +56,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	private static DbHelper sInstance = null;
 
-	private String mTitleSortOrder = ORDER_BY_ASC;
-	private String mDateSortOrder  = ORDER_BY_DESC;
-
 	public DbHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
 	}
@@ -79,216 +71,6 @@ public class DbHelper extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
-	public Cursor selectAll() {
-		final SQLiteDatabase db = getWritableDatabase();
-
-		if (db == null) {
-			return null;
-		}
-
-		/*
-		SELECT *
-		FROM MyTable
-		WHERE SomeColumn > LastValue
-		ORDER BY SomeColumn
-		LIMIT 100
-		 */
-		return db.rawQuery(SELECT_ALL_BY_TITLE, null);
-	}
-
-	public Cursor selectFavoritesByTitleAsc() {
-		Log.d("DB", "selectFavoritesByTitleAsc");
-		final SQLiteDatabase db = getWritableDatabase();
-
-		if (db == null) {
-			return null;
-		}
-
-		return db.rawQuery(SELECT_FAVORITES_BY_TITLE + ORDER_BY_ASC, null);
-	}
-
-	public Cursor selectFavoritesByTitleDesc() {
-		Log.d("DB", "selectFavoritesByTitleDesc");
-		final SQLiteDatabase db = getWritableDatabase();
-
-		if (db == null) {
-			return null;
-		}
-
-		return db.rawQuery(SELECT_FAVORITES_BY_TITLE + ORDER_BY_DESC, null);
-	}
-
-	public Cursor selectFavoritesByDateAsc() {
-		Log.d("DB", "selectFavoritesByDateAsc");
-		final SQLiteDatabase db = getWritableDatabase();
-
-		if (db == null) {
-			return null;
-		}
-
-		return db.rawQuery(SELECT_FAVORITES_BY_DATE + ORDER_BY_ASC, null);
-	}
-
-	public Cursor selectFavoritesByDateDesc() {
-		Log.d("DB", "selectFavoritesByDateDesc");
-		final SQLiteDatabase db = getWritableDatabase();
-
-		if (db == null) {
-			return null;
-		}
-
-		return db.rawQuery(SELECT_FAVORITES_BY_DATE + ORDER_BY_DESC, null);
-	}
-
-//	public void selectFavoritesBK(final OnSelectComplete callback, final boolean orderByTile) {
-//		final SQLiteDatabase db = getWritableDatabase();
-//
-//		if (db == null) {
-//			callback.onTransactionError();
-//			return;
-//		}
-//
-//		final Cursor cursor = db.rawQuery(
-//				orderByTile
-//						? SELECT_ALL_BY_TITLE + mTitleSortOrder
-//						: SELECT_ALL_BY_DATE + mDateSortOrder,
-//				null
-//		);
-//
-//		if (cursor == null) {
-//			callback.onTransactionError();
-//			return;
-//		}
-//
-//		final List<FeedItemDTO> arrayList = new ArrayList<>();
-//
-//		if (cursor.moveToFirst()) {
-//			do {
-//				final FeedItemDTO feedItemDTO = FeedItemDTO.fromDbCursor(cursor);
-//				arrayList.add(feedItemDTO);
-//			} while (cursor.moveToNext());
-//		}
-//
-//		cursor.close();
-//
-//		if (arrayList.isEmpty() && arrayList.size() == 0) {
-//			callback.onTransactionError();
-//			return;
-//		}
-//
-//		// Toggle sort order for the next look up.
-//		if (orderByTile) {
-//			mTitleSortOrder = mTitleSortOrder.equals(ORDER_BY_ASC) ? ORDER_BY_DESC : ORDER_BY_ASC;
-//		} else {
-//			mDateSortOrder = mDateSortOrder.equals(ORDER_BY_ASC) ? ORDER_BY_DESC : ORDER_BY_ASC;
-//		}
-//
-//		callback.onTransactionSuccess(arrayList);
-//	}
-
-//	public void bulkInsertItems(final List<FeedItemDTO> items,
-//	                            final OnTransactionComplete callback) {
-//		final SQLiteDatabase db = getWritableDatabase();
-//		long newRowId = -1;
-//
-//		if (db == null || items == null) {
-//			callback.onError();
-//			return;
-//		}
-//
-//		db.beginTransaction();
-//
-//		try {
-//			for (FeedItemDTO item : items) {
-//				newRowId = db.insert(TABLE_NAME, null, item.toContentValues());
-//			}
-//
-//			db.setTransactionSuccessful();
-//		} finally {
-//			db.endTransaction();
-//		}
-//
-//		final boolean success = newRowId != -1;
-//
-//		if (success) {
-//			callback.onSuccess(newRowId);
-//		} else {
-//			callback.onError();
-//		}
-//	}
-
-	public boolean updateFavoriteColumn(final FeedItemDTO feedItemDTO,
-	                                    final OnTransactionComplete callback) {
-		final SQLiteDatabase db = getWritableDatabase();
-
-		if (db == null || feedItemDTO == null) {
-			callback.onError();
-			return false;
-		}
-
-		db.beginTransaction();
-
-		long rowId = -1;
-
-		final ContentValues contentValues = new ContentValues();
-		contentValues.put(
-				FeedContract.ItemsEntry.FAVORITE_COLUMN,
-				feedItemDTO.isFavorite()
-		);
-
-		try {
-			rowId = db.update(
-					TABLE_NAME,
-					contentValues,
-					FeedItemDTO.TITLE_KEY + " = ?",
-					new String[] {
-							feedItemDTO.getTitle()
-					}
-			);
-
-			db.setTransactionSuccessful();
-		} finally {
-			db.endTransaction();
-		}
-
-		final boolean success = rowId != -1;
-
-		if (success) {
-			callback.onSuccess(rowId);
-		} else {
-			callback.onError();
-		}
-
-		return success;
-	}
-
-//	public boolean removeFavorite(final FeedItemDTO feedItemDTO, final ViewTransaction callback) {
-//		final SQLiteDatabase db = getWritableDatabase();
-//
-//		if (db == null || feedItemDTO == null) {
-//			callback.onTransactionError();
-//			return false;
-//		}
-//
-//		int rowId = db.delete(
-//				TABLE_NAME,
-//				FeedItemDTO.TITLE_KEY + " = ?",
-//				new String[]{
-//						feedItemDTO.getTitle()
-//				}
-//		);
-//
-//		final boolean success = rowId != -1;
-//
-//		if (success) {
-//			callback.onTransactionSuccess(rowId);
-//		} else {
-//			callback.onTransactionError();
-//		}
-//
-//		return success;
-//	}
-
 	public static DbHelper getInstance(final Context context) {
 		// Use application context, to prevent accidentally leaking an Activity's context.
 		// See this article for more information: http://bit.ly/6LRzfx
@@ -301,11 +83,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	public interface OnTransactionComplete {
 		void onSuccess(Object data);
-		void onError();
-	}
-
-	public interface OnSelectComplete {
-		void onSuccess(List<FeedItemDTO> list);
 		void onError();
 	}
 }

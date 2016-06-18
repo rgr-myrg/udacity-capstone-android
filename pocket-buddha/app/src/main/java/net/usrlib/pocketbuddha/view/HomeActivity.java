@@ -41,6 +41,10 @@ public class HomeActivity extends BaseActivity implements MvpView {
 	}
 
 	@Override
+	public void requestTransaction(Bundle bundle) {
+	}
+
+	@Override
 	public void onTransactionProgress(MvpPresenter.TransactionType type) {
 	}
 

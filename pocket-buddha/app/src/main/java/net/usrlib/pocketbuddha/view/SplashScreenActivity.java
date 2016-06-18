@@ -66,6 +66,10 @@ public class SplashScreenActivity extends AppCompatActivity implements MvpView {
 	public void onTransactionCursorReady(Cursor cursor) {
 	}
 
+	@Override
+	public void requestTransaction(Bundle data) {
+	}
+
 	private void loadWelcomeImage() {
 		Glide.with(this)
 				.load(R.drawable.happy_monk_275x275)

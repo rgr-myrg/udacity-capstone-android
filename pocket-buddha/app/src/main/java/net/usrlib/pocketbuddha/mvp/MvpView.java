@@ -12,4 +12,5 @@ public interface MvpView {
 	void onTransactionSuccess(MvpPresenter.TransactionType type, Bundle data);
 	void onTransactionError(MvpPresenter.TransactionType type);
 	void onTransactionCursorReady(Cursor cursor);
+	void requestTransaction(Bundle data);
 }

@@ -98,7 +98,8 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 
 		if (intent.hasExtra(FavoritesActivity.NAME)
 				&& intent.getBooleanExtra(FavoritesActivity.NAME, false)) {
-			MvpPresenter.getInstance().requestFavoritesFromDb(this);
+			//TODO: Specify sort order from intent
+			MvpPresenter.getInstance().requestFavoritesSortByDateDesc(this);
 		} else {
 			MvpPresenter.getInstance().requestItemsFromDb(this);
 		}
@@ -260,15 +261,21 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 		mCursor = cursor;
 		mData = getItem(mAdapterPosition);
 
-		if (mPagerAdapter == null) {
-			initViewPager(mAdapterPosition, cursor);
-		} else {
-			// TODO: Investigate issue where the view does not retain the latest update
-			//mPagerAdapter.updateCursor(cursor);
-		}
+		initViewPager(mAdapterPosition, cursor);
+//		if (mPagerAdapter == null) {
+//			initViewPager(mAdapterPosition, cursor);
+//		} else {
+//			// TODO: Investigate issue where the view does not retain the latest update
+//			//mPagerAdapter.updateCursor(cursor);
+//		}
 	}
 
 	protected void initViewPager(final int position, final Cursor cursor) {
+		if (mPagerAdapter != null) {
+			mPagerAdapter.changeCursor(cursor);
+			return;
+		}
+
 		mPagerAdapter = new DetailAdapter(getSupportFragmentManager(), cursor);
 
 		mViewPager = (ViewPager) findViewById(R.id.home_detail_viewpager);

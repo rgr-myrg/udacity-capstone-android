@@ -28,14 +28,11 @@ public class SplashScreenActivity extends AppCompatActivity implements MvpView {
 
 		mMessageTextView = (TextView) findViewById(R.id.splash_screen_message_textview);
 
-		Glide.with(this)
-				.load(R.drawable.happy_monk_275x275)
-				.into(((ImageView) findViewById(R.id.splash_screen_imageview)));
-
 		if (!Preferences.hasDataInstall(getApplicationContext())) {
+			loadWelcomeImage();
 			MvpPresenter.getInstance().requestFeedService(this);
 		} else {
-			onDbBulkInsertComplete();
+			startHomeActivity();
 		}
 	}
 
@@ -48,7 +45,7 @@ public class SplashScreenActivity extends AppCompatActivity implements MvpView {
 
 			case DB_BULK_INSERT:
 				Preferences.setHasDataInstall(getApplicationContext(), true);
-				onDbBulkInsertComplete();
+				startHomeActivity();
 				break;
 		}
 	}
@@ -69,7 +66,13 @@ public class SplashScreenActivity extends AppCompatActivity implements MvpView {
 	public void onTransactionCursorReady(Cursor cursor) {
 	}
 
-	private void onDbBulkInsertComplete() {
+	private void loadWelcomeImage() {
+		Glide.with(this)
+				.load(R.drawable.happy_monk_275x275)
+				.into(((ImageView) findViewById(R.id.splash_screen_imageview)));
+	}
+
+	private void startHomeActivity() {
 		displayMessage(R.string.splash_screen_finished_msg);
 
 		runOnUiThread(new Runnable() {

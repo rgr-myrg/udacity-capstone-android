@@ -29,8 +29,32 @@ public class DetailAdapter extends FragmentStatePagerAdapter {
 		return mCursor == null ? 0 : mCursor.getCount();
 	}
 
-	public void updateCursor(final Cursor cursor) {
-		this.mCursor = cursor;
-		notifyDataSetChanged();
+	public void changeCursor(Cursor cursor) {
+		Cursor swappedCursor = swapCursor(cursor);
+
+		if (swappedCursor != null) {
+			swappedCursor.close();
+		}
 	}
+
+	private Cursor swapCursor(Cursor cursor) {
+		if (mCursor == cursor) {
+			return null;
+		}
+
+		final Cursor previousCursor = mCursor;
+
+		mCursor = cursor;
+
+		if (cursor != null) {
+			this.notifyDataSetChanged();
+		}
+
+		return previousCursor;
+	}
+
+//	public void updateCursor(final Cursor cursor) {
+//		this.mCursor = cursor;
+//		notifyDataSetChanged();
+//	}
 }

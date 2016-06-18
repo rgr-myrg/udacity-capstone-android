@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import net.usrlib.pocketbuddha.provider.FeedContract;
 import net.usrlib.pocketbuddha.service.FeedReceiver;
@@ -111,8 +112,28 @@ public class MvpPresenter {
 		requestLoaderManagerForDbQuery(app, FeedContract.ItemsEntry.CONTENT_URI);
 	}
 
-	public void requestFavoritesFromDb(final AppCompatActivity app, final int sortBy) {
-		requestLoaderManagerForDbQuery(app, FeedContract.ItemsEntry.CONTENT_FAVORITES_URI);
+	public void requestFavoritesSortByTitleAsc(final AppCompatActivity app) {
+		requestLoaderManagerForDbQuery(
+				app, FeedContract.ItemsEntry.CONTENT_FAVORITES_BY_TITLE_ASC_URI
+		);
+	}
+
+	public void requestFavoritesSortByTitleDesc(final AppCompatActivity app) {
+		requestLoaderManagerForDbQuery(
+				app, FeedContract.ItemsEntry.CONTENT_FAVORITES_BY_TITLE_DESC_URI
+		);
+	}
+
+	public void requestFavoritesSortByDateAsc(final AppCompatActivity app) {
+		requestLoaderManagerForDbQuery(
+				app, FeedContract.ItemsEntry.CONTENT_FAVORITES_BY_DATE_ASC_URI
+		);
+	}
+
+	public void requestFavoritesSortByDateDesc(final AppCompatActivity app) {
+		requestLoaderManagerForDbQuery(
+				app, FeedContract.ItemsEntry.CONTENT_FAVORITES_BY_DATE_DESC_URI
+		);
 	}
 
 	public void requestItemUpdate(final AppCompatActivity app, final MvpModel data) {
@@ -153,6 +174,7 @@ public class MvpPresenter {
 	}
 
 	private void requestLoaderManagerForDbQuery(final AppCompatActivity app, final Uri uri) {
+		Log.d("PRESENTER", "DB Request Uri:" + uri.toString());
 		final MvpView mvpView = (MvpView) app;
 		final ContentResolver contentResolver = app.getContentResolver();
 

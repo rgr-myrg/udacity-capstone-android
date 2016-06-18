@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import net.usrlib.pocketbuddha.model.FeedItemDTO;
 import net.usrlib.pocketbuddha.provider.FeedContract;
@@ -96,6 +97,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 
 	public Cursor selectFavoritesByTitleAsc() {
+		Log.d("DB", "selectFavoritesByTitleAsc");
 		final SQLiteDatabase db = getWritableDatabase();
 
 		if (db == null) {
@@ -106,6 +108,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 
 	public Cursor selectFavoritesByTitleDesc() {
+		Log.d("DB", "selectFavoritesByTitleDesc");
 		final SQLiteDatabase db = getWritableDatabase();
 
 		if (db == null) {
@@ -116,6 +119,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 
 	public Cursor selectFavoritesByDateAsc() {
+		Log.d("DB", "selectFavoritesByDateAsc");
 		final SQLiteDatabase db = getWritableDatabase();
 
 		if (db == null) {
@@ -126,6 +130,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 
 	public Cursor selectFavoritesByDateDesc() {
+		Log.d("DB", "selectFavoritesByDateDesc");
 		final SQLiteDatabase db = getWritableDatabase();
 
 		if (db == null) {

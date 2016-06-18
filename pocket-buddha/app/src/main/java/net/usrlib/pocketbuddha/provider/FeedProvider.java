@@ -18,18 +18,8 @@ public class FeedProvider extends ContentProvider {
 	public static final String AUTHORITY = "net.usrlib.pocketbuddha.provider.feed";
 	public static final String BASE_PATH = "items";
 	public static final Uri CONTENT_URI  = Uri.parse("content://" + AUTHORITY + BASE_PATH);
-	// CONTENT_URI = content://net.usrlib.pocketbuddha.provider/items
-
-//	public static final int URI_TYPE_ALL_ITEMS = 100;
-//	public static final int ITEMS_BULK_INSERT = 101;
-//	public static final int ITEM_UPDATE = 102;
-//	public static final int FAVORITES_BY_TITLE_ASC = 103;
-//	public static final int FAVORITES_BY_TITLE_DESC = 104;
-//	public static final int FAVORITES_BY_DATE_ASC = 105;
-//	public static final int FAVORITES_BY_DATE_DESC = 106;
 
 	private static final UriMatcher sUriMatcher = buildUriMatcher();
-
 	private DbHelper dbHelper = null;
 
 	@Override
@@ -52,15 +42,19 @@ public class FeedProvider extends ContentProvider {
 			case FeedContract.ItemsEntry.URI_TYPE_ALL_ITEMS:
 				cursor = dbHelper.selectAll();
 				break;
+
 			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_TITLE_ASC:
 				cursor = dbHelper.selectFavoritesByTitleAsc();
 				break;
+
 			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_TITLE_DESC:
 				cursor = dbHelper.selectFavoritesByTitleDesc();
 				break;
+
 			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_DATE_ASC:
 				cursor = dbHelper.selectFavoritesByDateAsc();
 				break;
+
 			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_DATE_DESC:
 				cursor = dbHelper.selectFavoritesByDateDesc();
 				break;
@@ -73,6 +67,7 @@ public class FeedProvider extends ContentProvider {
 	@Override
 	public String getType(Uri uri) {
 		final int match = sUriMatcher.match(uri);
+
 		switch (match) {
 			case FeedContract.ItemsEntry.URI_TYPE_ALL_ITEMS:
 				return FeedContract.ItemsEntry.CONTENT_TYPE;
@@ -171,12 +166,47 @@ public class FeedProvider extends ContentProvider {
 		final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 		final String authority = FeedContract.CONTENT_AUTHORITY;
 
-		matcher.addURI(authority, FeedContract.PATH_ITEMS, FeedContract.ItemsEntry.URI_TYPE_ALL_ITEMS);
-		matcher.addURI(authority, FeedContract.PATH_BULK_INSERT, FeedContract.ItemsEntry.URI_TYPE_ITEMS_BULK_INSERT);
-		matcher.addURI(authority, FeedContract.PATH_ITEM_UPDATE, FeedContract.ItemsEntry.URI_TYPE_ITEM_UPDATE);
-		matcher.addURI(authority, FeedContract.PATH_FAVORITES, FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_DATE_DESC);
+		matcher.addURI(
+				authority,
+				FeedContract.PATH_ITEMS,
+				FeedContract.ItemsEntry.URI_TYPE_ALL_ITEMS
+		);
 
-		//matcher.addURI(authority, FeedContract.PATH_FAVORITES + "/*", FAVORITES_BY_TITLE_ASC);
+		matcher.addURI(
+				authority,
+				FeedContract.PATH_ITEMS_INSERT_BULK,
+				FeedContract.ItemsEntry.URI_TYPE_ITEMS_BULK_INSERT
+		);
+
+		matcher.addURI(
+				authority,
+				FeedContract.PATH_ITEM_UPDATE,
+				FeedContract.ItemsEntry.URI_TYPE_ITEM_UPDATE
+		);
+
+		matcher.addURI(
+				authority,
+				FeedContract.PATH_FAVORITES_BY_DATE_ASC,
+				FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_DATE_ASC
+		);
+
+		matcher.addURI(
+				authority,
+				FeedContract.PATH_FAVORITES_BY_DATE_DESC,
+				FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_DATE_DESC
+		);
+
+		matcher.addURI(
+				authority,
+				FeedContract.PATH_FAVORITES_BY_TITLE_ASC,
+				FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_TITLE_ASC
+		);
+
+		matcher.addURI(
+				authority,
+				FeedContract.PATH_FAVORITES_BY_TITLE_DESC,
+				FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_TITLE_DESC
+		);
 
 		return matcher;
 	}

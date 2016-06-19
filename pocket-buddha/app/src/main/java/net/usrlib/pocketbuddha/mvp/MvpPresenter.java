@@ -205,10 +205,14 @@ public class MvpPresenter {
 		loaderManager.restartLoader(1, null, loaderHelper);
 	}
 
+//	public void requestTitleSearchDbQuery(final AppCompatActivity app, final Uri uri) {
+//		final MvpView mvpView = (MvpView) app;
+//	}
 	public static enum TransactionType {
 		FEED_SERVICE,
 		DB_BULK_INSERT,
 		DB_QUERY,
-		DB_UPDATE
+		DB_UPDATE,
+		LIST_SEARCH
 	}
 }

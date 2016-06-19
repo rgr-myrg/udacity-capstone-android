@@ -40,6 +40,12 @@ public class FeedProvider extends ContentProvider {
 			return null;
 		}
 
+		final SQLiteDatabase sqlLite = db.getWritableDatabase();
+
+		if (sqlLite == null) {
+			return null;
+		}
+
 		String sqlStr = null;
 
 		switch (uriType) {
@@ -62,11 +68,15 @@ public class FeedProvider extends ContentProvider {
 			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_DATE_DESC:
 				sqlStr = DbHelper.SELECT_FAVORITES_BY_DATE + DbHelper.ORDER_BY_DESC;
 				break;
+
+//			case FeedContract.ItemsEntry.URI_TYPE_ITEMS_TITLE_SEARCH:
+//				sqlStr = DbHelper.SEARCH_BY_TITLE;
+//				break;
 		}
 
-		final SQLiteDatabase sqlLite = db.getWritableDatabase();
-
-		if (sqlLite == null || sqlStr == null) {
+//		final SQLiteDatabase sqlLite = db.getWritableDatabase();
+//
+		if (sqlStr == null) {
 			return null;
 		}
 
@@ -212,6 +222,12 @@ public class FeedProvider extends ContentProvider {
 				FeedContract.PATH_FAVORITES_BY_TITLE_DESC,
 				FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_TITLE_DESC
 		);
+
+//		matcher.addURI(
+//				authority,
+//				FeedContract.PATH_ITEMS_TITLE_SEARCH,
+//				FeedContract.ItemsEntry.URI_TYPE_ITEMS_TITLE_SEARCH
+//		);
 
 		return matcher;
 	}

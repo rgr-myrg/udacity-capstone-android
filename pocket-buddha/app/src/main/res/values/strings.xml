@@ -28,10 +28,12 @@
 	<string name="msg_play_error">Unable to play file at this time.</string>
 
 	<string name="content_image_description">Captivating Buddhist Image</string>
+
 	<string name="search_authority">net.usrlib.pocketbuddha.provider.search</string>
 	<string name="search_intent_data">
 		content://net.usrlib.pocketbuddha.provider.city
 	</string>
+    <string name="search_hint">Search hint</string>
 
     <string name="splash_screen_welcome_msg">One peaceful moment.</string>
 	<string name="splash_screen_startup_msg">Updating...</string>

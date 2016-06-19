@@ -36,22 +36,28 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	public static final String EXISTS = "SELECT name FROM sqlite_master WHERE type='table' AND name = ?";
 
-	public static final String SELECT_ALL_BY_DATE = "SELECT * FROM " + TABLE_NAME
-			+ " ORDER BY " + TIMESTAMP_COLUMN;
+//	public static final String SELECT_ALL_BY_DATE = "SELECT * FROM " + TABLE_NAME
+//			+ " ORDER BY " + TIMESTAMP_COLUMN;
 
-	public static final String SELECT_ALL_BY_TITLE = "SELECT * FROM " + TABLE_NAME
+	public static final String SELECT_CLAUSE = "SELECT * FROM " + TABLE_NAME;
+
+	public static final String SELECT_ALL_BY_TITLE = SELECT_CLAUSE
 			+ " ORDER BY " + FeedContract.ItemsEntry.TITLE_COLUMN;
 
-	public static final String SELECT_FAVORITES_BY_TITLE = "SELECT * FROM " + TABLE_NAME
+	public static final String SELECT_FAVORITES_BY_TITLE = SELECT_CLAUSE
 			+ " WHERE " + FeedContract.ItemsEntry.FAVORITE_COLUMN + " = 1"
 			+ " ORDER BY " + FeedContract.ItemsEntry.TITLE_COLUMN;
 
-	public static final String SELECT_FAVORITES_BY_DATE = "SELECT * FROM " + TABLE_NAME
+	public static final String SELECT_FAVORITES_BY_DATE = SELECT_CLAUSE
 			+ " WHERE " + FeedContract.ItemsEntry.FAVORITE_COLUMN + " = 1"
 			+ " ORDER BY " + TIMESTAMP_COLUMN;
 
 	public static final String ORDER_BY_ASC  = " ASC";
 	public static final String ORDER_BY_DESC = " DESC";
+
+//	public static final String SEARCH_BY_TITLE = SELECT_CLAUSE
+//			+ " WHERE " + FeedContract.ItemsEntry.TITLE_COLUMN + " LIKE ?"
+//			+ " ORDER BY " + FeedContract.ItemsEntry.TITLE_COLUMN + ORDER_BY_ASC;
 
 	private static DbHelper sInstance = null;
 
@@ -78,10 +84,5 @@ public class DbHelper extends SQLiteOpenHelper {
 		}
 
 		return sInstance;
-	}
-
-	public interface OnTransactionComplete {
-		void onSuccess(Object data);
-		void onError();
 	}
 }

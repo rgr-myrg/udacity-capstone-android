@@ -31,7 +31,7 @@
 
 	<string name="search_authority">net.usrlib.pocketbuddha.provider.search</string>
 	<string name="search_intent_data">
-		content://net.usrlib.pocketbuddha.provider.city
+		content://net.usrlib.pocketbuddha.provider.search
 	</string>
     <string name="search_hint">Search hint</string>
 

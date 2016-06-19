@@ -10,10 +10,13 @@ import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.util.LruCache;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * Created by rgr-myrg on 6/15/16.
@@ -248,4 +251,30 @@ public class MvpModel implements Parcelable {
 
 		}
 	}
+
+//	public static final class Cache extends  LruCache<String, Object> {
+//		public static final String ITEM_TITLE_LIST_KEY = "itemTitleList";
+//		public static final int MAX_CACHE_SIZE = 5;
+//
+//		/**
+//		 * for caches that do not override {@link #sizeOf}, this is
+//		 * the maximum number of entries in the cache. For all other caches,
+//		 * this is the maximum sum of the sizes of the entries in this cache.
+//		 */
+//		public Cache() {
+//			super(MAX_CACHE_SIZE);
+//		}
+//
+//		public final synchronized void addTitleList(List<String> list) {
+//			put(ITEM_TITLE_LIST_KEY, list);
+//		}
+//
+//		public final List<String> getItemsTitleList() {
+//			if (get(ITEM_TITLE_LIST_KEY) == null) {
+//				return null;
+//			}
+//
+//			return (List<String>) get(ITEM_TITLE_LIST_KEY);
+//		}
+//	}
 }

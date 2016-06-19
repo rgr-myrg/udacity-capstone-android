@@ -91,6 +91,7 @@
 			android:authorities="net.usrlib.pocketbuddha.provider"
 			android:name=".provider.FeedProvider"
 			android:exported="false"/>
+
 		<provider
 			android:authorities="net.usrlib.pocketbuddha.provider.search"
 			android:name=".provider.SearchProvider"

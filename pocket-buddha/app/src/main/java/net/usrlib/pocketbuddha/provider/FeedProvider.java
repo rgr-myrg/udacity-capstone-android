@@ -8,6 +8,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import net.usrlib.pocketbuddha.data.DbHelper;
 
@@ -33,6 +34,7 @@ public class FeedProvider extends ContentProvider {
 									 String selection,
 									 String[] selectionArgs,
 									 String sortOrder) {
+		Log.d("MAIN", "FeedProvider query: " + uri);
 		final int uriType = sUriMatcher.match(uri);
 		final DbHelper db = DbHelper.getInstance(getContext());
 

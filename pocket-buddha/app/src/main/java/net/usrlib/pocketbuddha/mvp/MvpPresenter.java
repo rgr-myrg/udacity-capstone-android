@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import net.usrlib.pocketbuddha.provider.FeedContract;
 import net.usrlib.pocketbuddha.service.FeedReceiver;
@@ -24,6 +25,8 @@ public class MvpPresenter {
 	private FeedReceiver mFeedReceiver = null;
 	private boolean mHasInitLoader = false;
 	private Uri mLastDbQueryUri = null;
+
+//	private MvpModel.Cache mCache = new MvpModel.Cache();
 
 	public static final MvpPresenter getInstance() {
 		if (sInstance == null) {
@@ -205,7 +208,40 @@ public class MvpPresenter {
 		loaderManager.restartLoader(1, null, loaderHelper);
 	}
 
-//	public void requestTitleSearchDbQuery(final AppCompatActivity app, final Uri uri) {
+	public void requestItemFromSearchProvider(final AppCompatActivity app, final Uri uri) {
+		final int itemId = Integer.valueOf(uri.getLastPathSegment());
+		Log.d("MAIN", "requestItemFromSearchProvider Uri: " + uri);
+		Log.d("MAIN", "requestItemFromSearchProvider itemId: " + itemId);
+		final MvpView mvpView = (MvpView) app;
+		final ContentResolver contentResolver = app.getContentResolver();
+
+		if (contentResolver == null || uri == null) {
+			mvpView.onTransactionError(TransactionType.TITLE_SEARCH);
+			return;
+		}
+		final LoaderManager loaderManager = app.getSupportLoaderManager();
+
+		if (loaderManager == null) {
+			mvpView.onTransactionError(TransactionType.TITLE_SEARCH);
+			return;
+		}
+
+		final MvpModel.LoaderHelper loaderHelper = new MvpModel.LoaderHelper(
+				app.getApplicationContext(),
+				uri,
+				mvpView
+		);
+		loaderManager.initLoader(2, null, loaderHelper);
+	}
+//	public void saveItemsTitleListToCache(final List<String> itemList) {
+//		mCache.addTitleList(itemList);
+//	}
+//
+//	public List<String> getItemsListFromCache() {
+//		return mCache.getItemsTitleList();
+//	}
+
+	//	public void requestTitleSearchDbQuery(final AppCompatActivity app, final Uri uri) {
 //		final MvpView mvpView = (MvpView) app;
 //	}
 	public static enum TransactionType {
@@ -213,6 +249,6 @@ public class MvpPresenter {
 		DB_BULK_INSERT,
 		DB_QUERY,
 		DB_UPDATE,
-		LIST_SEARCH
+		TITLE_SEARCH
 	}
 }

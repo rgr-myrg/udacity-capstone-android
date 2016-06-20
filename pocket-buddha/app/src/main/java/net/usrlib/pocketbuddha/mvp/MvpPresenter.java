@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import net.usrlib.pocketbuddha.provider.FeedContract;
 import net.usrlib.pocketbuddha.provider.SearchContract;

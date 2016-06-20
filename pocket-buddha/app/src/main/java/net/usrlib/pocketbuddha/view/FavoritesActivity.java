@@ -31,7 +31,7 @@ public class FavoritesActivity extends BaseActivity implements MvpView {
 
 		initContentView(R.layout.favorites_activity);
 
-		MvpPresenter.getInstance().requestFavoritesSortByDateAsc(this);
+		MvpPresenter.getInstance().requestFavoritesSortByDateDesc(this);
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class FavoritesActivity extends BaseActivity implements MvpView {
 				if (previousUri != null) {
 					MvpPresenter.getInstance().requestLoaderManagerForDbQuery(this, previousUri);
 				} else {
-					MvpPresenter.getInstance().requestFavoritesSortByDateAsc(this);
+					MvpPresenter.getInstance().requestFavoritesSortByDateDesc(this);
 				}
 
 				break;

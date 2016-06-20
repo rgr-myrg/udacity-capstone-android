@@ -34,7 +34,6 @@ public class FeedProvider extends ContentProvider {
 									 String selection,
 									 String[] selectionArgs,
 									 String sortOrder) {
-		Log.d("MAIN", "FeedProvider query: " + uri);
 		final int uriType = sUriMatcher.match(uri);
 		final DbHelper db = DbHelper.getInstance(getContext());
 
@@ -70,14 +69,8 @@ public class FeedProvider extends ContentProvider {
 			case FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_DATE_DESC:
 				sqlStr = DbHelper.SELECT_FAVORITES_BY_DATE + DbHelper.ORDER_BY_DESC;
 				break;
-
-//			case FeedContract.ItemsEntry.URI_TYPE_ITEMS_TITLE_SEARCH:
-//				sqlStr = DbHelper.SEARCH_BY_TITLE;
-//				break;
 		}
 
-//		final SQLiteDatabase sqlLite = db.getWritableDatabase();
-//
 		if (sqlStr == null) {
 			return null;
 		}
@@ -132,6 +125,8 @@ public class FeedProvider extends ContentProvider {
 		db.beginTransaction();
 
 		try {
+			values.put(FeedContract.ItemsEntry.TIMESTAMP_COLUMN, "CURRENT_TIMESTAMP");
+
 			rowUpdated = db.update(table, values, where, whereArgs);
 			db.setTransactionSuccessful();
 
@@ -224,12 +219,6 @@ public class FeedProvider extends ContentProvider {
 				FeedContract.PATH_FAVORITES_BY_TITLE_DESC,
 				FeedContract.ItemsEntry.URI_TYPE_FAVORITES_BY_TITLE_DESC
 		);
-
-//		matcher.addURI(
-//				authority,
-//				FeedContract.PATH_ITEMS_TITLE_SEARCH,
-//				FeedContract.ItemsEntry.URI_TYPE_ITEMS_TITLE_SEARCH
-//		);
 
 		return matcher;
 	}

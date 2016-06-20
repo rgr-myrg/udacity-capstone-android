@@ -24,6 +24,7 @@ public class MvpModel implements Parcelable {
 	public static final int DB_SEARCH_LOADER_ID = 2;
 
 	public static final String POSITION_KEY = "adapterPosition";
+
 	public static final String TITLE_COLUMN = "title";
 	public static final String PALI_COLUMN  = "pali";
 	public static final String ENGLISH_COLUMN   = "english";
@@ -32,6 +33,7 @@ public class MvpModel implements Parcelable {
 	public static final String AUTHOR_COLUMN    = "author";
 	public static final String SUBJECT_COLUMN   = "subject";
 	public static final String FAVORITE_COLUMN  = "favorite";
+	public static final String TIMESTAMP_COLUMN = "timestamp";
 
 	private String title;
 	private String pali;
@@ -250,30 +252,4 @@ public class MvpModel implements Parcelable {
 
 		}
 	}
-
-//	public static final class Cache extends  LruCache<String, Object> {
-//		public static final String ITEM_TITLE_LIST_KEY = "itemTitleList";
-//		public static final int MAX_CACHE_SIZE = 5;
-//
-//		/**
-//		 * for caches that do not override {@link #sizeOf}, this is
-//		 * the maximum number of entries in the cache. For all other caches,
-//		 * this is the maximum sum of the sizes of the entries in this cache.
-//		 */
-//		public Cache() {
-//			super(MAX_CACHE_SIZE);
-//		}
-//
-//		public final synchronized void addTitleList(List<String> list) {
-//			put(ITEM_TITLE_LIST_KEY, list);
-//		}
-//
-//		public final List<String> getItemsTitleList() {
-//			if (get(ITEM_TITLE_LIST_KEY) == null) {
-//				return null;
-//			}
-//
-//			return (List<String>) get(ITEM_TITLE_LIST_KEY);
-//		}
-//	}
 }

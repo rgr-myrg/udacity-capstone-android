@@ -13,7 +13,6 @@ public class DbHelper extends SQLiteOpenHelper {
 	public static final String DB_NAME = "net.usrlib.android.pocketbuddha.data";
 	public static final int DB_VERSION = 1;
 	public static final String TABLE_NAME = "feed_items";
-	public static final String TIMESTAMP_COLUMN = "timestamp";
 	public static final String ID_COLUMN = "_id";
 
 	public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS "
@@ -28,16 +27,21 @@ public class DbHelper extends SQLiteOpenHelper {
 			+ FeedContract.ItemsEntry.AUTHOR_COLUMN    + " TEXT,"
 			+ FeedContract.ItemsEntry.SUBJECT_COLUMN   + " TEXT,"
 			+ FeedContract.ItemsEntry.FAVORITE_COLUMN  + " INTEGER NOT NULL,"
-			+ TIMESTAMP_COLUMN + " DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
+			+ FeedContract.ItemsEntry.TIMESTAMP_COLUMN + " DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
 			+ "UNIQUE (" + FeedContract.ItemsEntry.TITLE_COLUMN + ") ON CONFLICT REPLACE"
 			+ ")";
+
+	private static final String CREATE_TRIGGER = "CREATE TRIGGER IF NOT EXISTS timestamp_trigger "
+			+ "AFTER UPDATE ON " + TABLE_NAME + " FOR EACH ROW "
+			+ "BEGIN "
+				+ "UPDATE " + TABLE_NAME
+				+ " SET " + FeedContract.ItemsEntry.TIMESTAMP_COLUMN + " = CURRENT_TIMESTAMP"
+				+ " WHERE " + ID_COLUMN + " = old." + ID_COLUMN + ";"
+			+ " END";
 
 	public static final String DROP_TABLE = "DROP TABLE " + TABLE_NAME;
 
 	public static final String EXISTS = "SELECT name FROM sqlite_master WHERE type='table' AND name = ?";
-
-//	public static final String SELECT_ALL_BY_DATE = "SELECT * FROM " + TABLE_NAME
-//			+ " ORDER BY " + TIMESTAMP_COLUMN;
 
 	public static final String SELECT_CLAUSE = "SELECT * FROM " + TABLE_NAME;
 
@@ -50,14 +54,10 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	public static final String SELECT_FAVORITES_BY_DATE = SELECT_CLAUSE
 			+ " WHERE " + FeedContract.ItemsEntry.FAVORITE_COLUMN + " = 1"
-			+ " ORDER BY " + TIMESTAMP_COLUMN;
+			+ " ORDER BY " + FeedContract.ItemsEntry.TIMESTAMP_COLUMN;
 
 	public static final String ORDER_BY_ASC  = " ASC";
 	public static final String ORDER_BY_DESC = " DESC";
-
-//	public static final String SEARCH_BY_TITLE = SELECT_CLAUSE
-//			+ " WHERE " + FeedContract.ItemsEntry.TITLE_COLUMN + " LIKE ?"
-//			+ " ORDER BY " + FeedContract.ItemsEntry.TITLE_COLUMN + ORDER_BY_ASC;
 
 	private static DbHelper sInstance = null;
 
@@ -68,6 +68,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(CREATE_TABLE);
+		db.execSQL(CREATE_TRIGGER);
 	}
 
 	@Override

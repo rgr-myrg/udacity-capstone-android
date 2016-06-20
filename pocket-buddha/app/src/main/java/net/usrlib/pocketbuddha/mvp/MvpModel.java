@@ -10,19 +10,18 @@ import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.util.LruCache;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
 
 /**
  * Created by rgr-myrg on 6/15/16.
  */
 public class MvpModel implements Parcelable {
 	public static final String NAME = MvpModel.class.getSimpleName();
+	public static final int DB_QUERY_LOADER_ID  = 1;
+	public static final int DB_SEARCH_LOADER_ID = 2;
 
 	public static final String POSITION_KEY = "adapterPosition";
 	public static final String TITLE_COLUMN = "title";

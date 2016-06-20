@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,16 +56,20 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 
 		mAdapterPosition = intent.getIntExtra(MvpModel.POSITION_KEY, 0);
 
-		// Determine which items to request: Favorites, Search results, or All items.
-		if (intent.hasExtra(FavoritesActivity.NAME)) {
-			final Uri previousUri = MvpPresenter.getInstance().getLastDbQueryUri();
+		final String action = intent.getAction();
 
-			// Retain previous query if available
-			if (previousUri != null) {
-				MvpPresenter.getInstance().requestLoaderManagerForDbQuery(this, previousUri);
-			} else {
-				MvpPresenter.getInstance().requestFavoritesSortByDateDesc(this);
-			}
+		if (action == null) {
+			MvpPresenter.getInstance().requestItemsFromDb(this);
+			return;
+		}
+
+		// Determine which cursor results to request based on Intent Action
+		if (action.equals(Intent.ACTION_SEARCH)) {
+			startSearchResultsActivity(intent);
+		} else if (action.equals(Intent.ACTION_VIEW)) {
+			requestSearchResults(intent);
+		} else if (action.equals(FavoritesActivity.ACTION)) {
+			requestFavorites();
 		} else {
 			MvpPresenter.getInstance().requestItemsFromDb(this);
 		}
@@ -214,7 +217,7 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 
 		displayMessage(msgId);
 
-		//TODO: Get last transaction ???
+		//TODO: Get last transaction ??? Figure out if view should be updated. Ex: Came from search result
 		// Refresh this view's data for DB_UPDATE transactions
 		MvpPresenter.getInstance().requestItemsFromDb(this);
 	}
@@ -236,7 +239,7 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 	public void requestTransaction(Bundle data) {
 	}
 
-	protected void initViewPager(final int position, final Cursor cursor) {
+	private void initViewPager(final int position, final Cursor cursor) {
 		if (mPagerAdapter != null) {
 			mPagerAdapter.changeCursor(cursor);
 			return;
@@ -256,7 +259,29 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 		});
 	}
 
-	protected void onMp3StreamReady(final View view, final FloatingActionButton button) {
+	private void requestSearchResults(final Intent intent) {
+		final Uri uri = Uri.parse(intent.getDataString());
+
+		MvpPresenter.getInstance().requestItemFromSearchProvider(this, uri);
+	}
+
+	private void requestFavorites() {
+		final Uri previousUri = MvpPresenter.getInstance().getLastDbQueryUri();
+
+		// Retain previous query if available
+		if (previousUri != null) {
+			MvpPresenter.getInstance().requestLoaderManagerForDbQuery(this, previousUri);
+		} else {
+			MvpPresenter.getInstance().requestFavoritesSortByDateDesc(this);
+		}
+	}
+
+	private void startSearchResultsActivity(final Intent intent) {
+		intent.setClass(getApplicationContext(), SearchResultActivity.class);
+		startActivity(intent);
+	}
+
+	private void onMp3StreamReady(final View view, final FloatingActionButton button) {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -266,7 +291,7 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 		});
 	}
 
-	protected void onMp3StreamError(final View view, final FloatingActionButton button) {
+	private void onMp3StreamError(final View view, final FloatingActionButton button) {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -280,7 +305,7 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 		});
 	}
 
-	protected void toggleFavoriteIcon(final View view, final MvpModel data) {
+	private void toggleFavoriteIcon(final View view, final MvpModel data) {
 		final ImageView icon = (ImageView) view;
 		final int iconResource = data.isFavorite()
 				? R.drawable.ic_star_black_36dp
@@ -295,7 +320,7 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 		}
 	}
 
-	protected void closeFloatingActionMenu(View view) {
+	private void closeFloatingActionMenu(View view) {
 		if (view == null) {
 			return;
 		}
@@ -309,16 +334,16 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 		menu.close(true);
 	}
 
-	protected String formatValueForIntent(final String value) {
+	private String formatValueForIntent(final String value) {
 		return Html.fromHtml(value + "<br/>" + "<br/>").toString();
 	}
 
-	protected MvpModel getItem(final int position) {
+	private MvpModel getItem(final int position) {
 		mCursor.moveToPosition(position);
 		return MvpModel.fromDbCursor(mCursor);
 	}
 
-	protected void displayMessage(final int msgId) {
+	private void displayMessage(final int msgId) {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {

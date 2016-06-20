@@ -106,7 +106,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter {
 		final Intent intent = new Intent(mContext, DetailActivity.class);
 
 		// Let DetailActivity know it should request Favorites
-		intent.putExtra(FavoritesActivity.NAME, true);
+		intent.setAction(FavoritesActivity.ACTION);
 		intent.putExtra(MvpModel.POSITION_KEY, position);
 
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

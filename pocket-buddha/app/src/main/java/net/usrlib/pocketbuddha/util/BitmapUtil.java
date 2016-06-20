@@ -28,15 +28,6 @@ public class BitmapUtil {
 
 		int color = DEFAULT_COLOR_TONE;
 
-//		Palette.Swatch swatch = palette.getVibrantSwatch();
-//
-//		if (swatch == null) {
-//			Log.w(NAME, "Swatch is null");
-//			return;
-//		}
-//
-//		color = swatch.getTitleTextColor();
-
 		final int mutedColor = palette.getVibrantColor(DEFAULT_COLOR_TONE);
 
 		color = Color.argb(

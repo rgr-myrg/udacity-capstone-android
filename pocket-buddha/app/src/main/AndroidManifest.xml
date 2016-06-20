@@ -56,9 +56,13 @@
 			android:launchMode="singleTop"
 			android:theme="@style/AppTheme.NoActionBar">
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
+				<!--<action android:name="android.intent.action.MAIN"/>-->
+				<action android:name="android.intent.action.SEARCH"/>
 				<category android:name="android.intent.category.INFO"/>
 			</intent-filter>
+			<meta-data
+				android:name="android.app.searchable"
+				android:resource="@xml/searchable"/>
 		</activity>
 
 		<activity
@@ -77,12 +81,12 @@
 			android:parentActivityName=".view.HomeActivity"
 			android:label="@string/activity_search_results"
 			android:theme="@style/AppTheme.NoActionBar">
-			<intent-filter>
-				<action android:name="android.intent.action.SEARCH"/>
-			</intent-filter>
-			<meta-data
-				android:name="android.app.searchable"
-				android:resource="@xml/searchable"/>
+			<!--<intent-filter>-->
+				<!--<action android:name="android.intent.action.SEARCH"/>-->
+			<!--</intent-filter>-->
+			<!--<meta-data-->
+				<!--android:name="android.app.searchable"-->
+				<!--android:resource="@xml/searchable"/>-->
 		</activity>
 
 		<service android:name=".service.FeedService"/>

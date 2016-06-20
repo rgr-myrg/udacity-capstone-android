@@ -200,25 +200,24 @@ public class MvpPresenter {
 		);
 
 		if (!mHasInitLoader) {
-			loaderManager.initLoader(1, null, loaderHelper);
+			loaderManager.initLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
 			mHasInitLoader = true;
 			return;
 		}
 
-		loaderManager.restartLoader(1, null, loaderHelper);
+		loaderManager.restartLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
 	}
 
 	public void requestItemFromSearchProvider(final AppCompatActivity app, final Uri uri) {
-		final int itemId = Integer.valueOf(uri.getLastPathSegment());
-		Log.d("MAIN", "requestItemFromSearchProvider Uri: " + uri);
-		Log.d("MAIN", "requestItemFromSearchProvider itemId: " + itemId);
 		final MvpView mvpView = (MvpView) app;
 		final ContentResolver contentResolver = app.getContentResolver();
+		final int itemId = Integer.valueOf(uri.getLastPathSegment());
 
 		if (contentResolver == null || uri == null) {
 			mvpView.onTransactionError(TransactionType.TITLE_SEARCH);
 			return;
 		}
+
 		final LoaderManager loaderManager = app.getSupportLoaderManager();
 
 		if (loaderManager == null) {
@@ -231,19 +230,14 @@ public class MvpPresenter {
 				uri,
 				mvpView
 		);
-		loaderManager.initLoader(2, null, loaderHelper);
+
+		// TODO: Does loader need a restart if already started for subsequent searches?
+		loaderManager.initLoader(MvpModel.DB_SEARCH_LOADER_ID, null, loaderHelper);
 	}
 //	public void saveItemsTitleListToCache(final List<String> itemList) {
 //		mCache.addTitleList(itemList);
 //	}
-//
-//	public List<String> getItemsListFromCache() {
-//		return mCache.getItemsTitleList();
-//	}
 
-	//	public void requestTitleSearchDbQuery(final AppCompatActivity app, final Uri uri) {
-//		final MvpView mvpView = (MvpView) app;
-//	}
 	public static enum TransactionType {
 		FEED_SERVICE,
 		DB_BULK_INSERT,

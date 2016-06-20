@@ -11,7 +11,9 @@ import net.usrlib.pocketbuddha.mvp.MvpModel;
 public class SearchContract {
 	public static final String CONTENT_AUTHORITY = "net.usrlib.pocketbuddha.provider.search";
 	public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+
 	public static final String SEARCH_SUGGEST_PATH = "search_suggest_query/*";
+	public static final String SEARCH_TERM_PATH    = "#";
 
 	public static final class TitleSearchEntry implements BaseColumns {
 
@@ -23,6 +25,12 @@ public class SearchContract {
 				.appendPath(SEARCH_SUGGEST_PATH)
 				.build();
 
+		public static final Uri SEARCH_TERM_CONTENT_URI = BASE_CONTENT_URI
+				.buildUpon()
+				.appendPath(SEARCH_TERM_PATH)
+				.build();
+
 		public static final int SEARCH_SUGGEST_URI_TYPE = 200;
+		public static final int SEARCH_TERM_URI_TYPE    = 201;
 	}
 }

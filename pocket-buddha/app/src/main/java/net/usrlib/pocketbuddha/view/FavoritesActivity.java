@@ -17,7 +17,7 @@ import net.usrlib.pocketbuddha.mvp.MvpPresenter;
 import net.usrlib.pocketbuddha.mvp.MvpView;
 
 public class FavoritesActivity extends BaseActivity implements MvpView {
-	public static final String NAME = FavoritesActivity.class.getSimpleName();
+	public static final String ACTION = FavoritesActivity.class.getSimpleName();
 
 	private FavoritesAdapter mRecyclerAdapter = null;
 	private RecyclerView mRecyclerView = null;
@@ -63,7 +63,7 @@ public class FavoritesActivity extends BaseActivity implements MvpView {
 
 	@Override
 	public void onTransactionError(MvpPresenter.TransactionType type) {
-		Log.w(NAME, "onTransactionError for type: " + type.toString());
+		Log.w(ACTION, "onTransactionError for type: " + type.toString());
 	}
 
 	@Override

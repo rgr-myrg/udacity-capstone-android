@@ -35,7 +35,6 @@ public class SearchProvider extends ContentProvider {
 		// content://net.usrlib.pocketbuddha.provider.search/47
 		// content://net.usrlib.pocketbuddha.provider.search/search_suggest_query/term?limit=50
 
-		Log.d("MAIN", "SEARCH PROVIDER Uri: " + uri);
 		final int uriType = sUriMatcher.match(uri);
 		final DbHelper db = DbHelper.getInstance(getContext());
 
@@ -50,48 +49,20 @@ public class SearchProvider extends ContentProvider {
 		}
 
 		Cursor cursor = null;
+
+		Log.d("MAIN", "SEARCH PROVIDER Uri: " + uri + " type " + uriType);
+
 		switch (uriType) {
 			case SearchContract.TitleSearchEntry.SEARCH_SUGGEST_URI_TYPE:
 				cursor = getTitleSearchListCursor(sqlite, uri);
+				break;
+
+			case SearchContract.TitleSearchEntry.SEARCH_TERM_URI_TYPE:
+				cursor = getSearchTermCursor(sqlite, uri);
+				break;
 		}
 
 		return cursor;
-//		final Cursor query = sqlite.query(
-//				true,
-//				FeedContract.ItemsEntry.TABLE_NAME_ITEMS,
-//				new String[] {
-//						BaseColumns._ID,
-//						FeedContract.ItemsEntry.TITLE_COLUMN
-//				},
-//				FeedContract.ItemsEntry.TITLE_COLUMN + " LIKE ?",
-//				new String[] {
-//						"%"+ searchText + "%"
-//				},
-//				null, null, null, null
-//		);
-//
-//		final MatrixCursor cursor = new MatrixCursor(
-//				new String[] {
-//						BaseColumns._ID,
-//						SearchManager.SUGGEST_COLUMN_TEXT_1,
-//						SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID
-//				}
-//		);
-//
-//		if (query.moveToFirst()) {
-//			do {
-//				final int itemId = query.getInt(
-//						query.getColumnIndex(BaseColumns._ID)
-//				);
-//				final String itemTitle = query.getString(
-//						query.getColumnIndex(FeedContract.ItemsEntry.TITLE_COLUMN)
-//				);
-//				cursor.addRow(new Object[]{ itemId, itemTitle, itemId });
-//			} while (query.moveToNext());
-//		}
-//
-//		query.close();
-//		return cursor;
 	}
 
 	private MatrixCursor getTitleSearchListCursor(final SQLiteDatabase sqlite, final Uri uri) {
@@ -134,6 +105,22 @@ public class SearchProvider extends ContentProvider {
 		return cursor;
 	}
 
+	private Cursor getSearchTermCursor(final SQLiteDatabase sqlite, final Uri uri) {
+		final int itemId = Integer.valueOf(uri.getLastPathSegment());
+		final Cursor query = sqlite.query(
+				true,
+				SearchContract.TitleSearchEntry.TABLE_NAME_ITEMS,
+				null,
+				BaseColumns._ID + "=?",
+				new String[] {
+						String.valueOf(itemId)
+				},
+				null, null, null, null
+		);
+
+		return query;
+	}
+
 	@Nullable
 	@Override
 	public String getType(Uri uri) {
@@ -159,6 +146,12 @@ public class SearchProvider extends ContentProvider {
 	public static UriMatcher buildUriMatcher() {
 		final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 		final String authority = SearchContract.CONTENT_AUTHORITY;
+
+		matcher.addURI(
+				authority,
+				SearchContract.SEARCH_TERM_PATH,
+				SearchContract.TitleSearchEntry.SEARCH_TERM_URI_TYPE
+		);
 
 		matcher.addURI(
 				authority,

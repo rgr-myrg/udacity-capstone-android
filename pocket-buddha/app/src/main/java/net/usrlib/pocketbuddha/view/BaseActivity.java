@@ -80,7 +80,7 @@ public class BaseActivity extends AppCompatActivity
 
 		searchView.setSearchableInfo(
 				searchManager.getSearchableInfo(
-						new ComponentName(this, SearchResultActivity.class)
+						new ComponentName(this, DetailActivity.class)
 				)
 		);
 

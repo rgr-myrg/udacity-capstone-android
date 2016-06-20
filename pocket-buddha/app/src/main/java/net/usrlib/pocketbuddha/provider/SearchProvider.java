@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import net.usrlib.pocketbuddha.data.DbHelper;
 
@@ -34,6 +33,7 @@ public class SearchProvider extends ContentProvider {
 						String sortOrder) {
 		// content://net.usrlib.pocketbuddha.provider.search/47
 		// content://net.usrlib.pocketbuddha.provider.search/search_suggest_query/term?limit=50
+		// content://net.usrlib.pocketbuddha.provider.search/search_text_query/mind
 
 		final int uriType = sUriMatcher.match(uri);
 		final DbHelper db = DbHelper.getInstance(getContext());
@@ -50,31 +50,33 @@ public class SearchProvider extends ContentProvider {
 
 		Cursor cursor = null;
 
-		Log.d("MAIN", "SEARCH PROVIDER Uri: " + uri + " type " + uriType);
-
 		switch (uriType) {
-			case SearchContract.TitleSearchEntry.SEARCH_SUGGEST_URI_TYPE:
-				cursor = getTitleSearchListCursor(sqlite, uri);
+			case SearchContract.SearchEntry.SEARCH_SUGGEST_URI_TYPE:
+				cursor = getTitleSearchItemsCursor(sqlite, uri);
 				break;
 
-			case SearchContract.TitleSearchEntry.SEARCH_TERM_URI_TYPE:
-				cursor = getSearchTermCursor(sqlite, uri);
+			case SearchContract.SearchEntry.SEARCH_TERM_URI_TYPE:
+				cursor = getTitleSearchResultCursor(sqlite, uri);
+				break;
+
+			case SearchContract.SearchEntry.SEARCH_TEXT_URI_TYPE:
+				cursor = getBodySearchResultCursor(sqlite, uri);
 				break;
 		}
 
 		return cursor;
 	}
 
-	private MatrixCursor getTitleSearchListCursor(final SQLiteDatabase sqlite, final Uri uri) {
+	private MatrixCursor getTitleSearchItemsCursor(final SQLiteDatabase sqlite, final Uri uri) {
 		final String searchText = uri.getLastPathSegment().toUpperCase();
 		final Cursor query = sqlite.query(
 				true,
-				SearchContract.TitleSearchEntry.TABLE_NAME_ITEMS,
+				SearchContract.SearchEntry.TABLE_NAME_ITEMS,
 				new String[] {
 						BaseColumns._ID,
 						FeedContract.ItemsEntry.TITLE_COLUMN
 				},
-				SearchContract.TitleSearchEntry.TITLE_COLUMN + " LIKE ?",
+				SearchContract.SearchEntry.TITLE_COLUMN + " LIKE ?",
 				new String[] {
 						"%"+ searchText + "%"
 				},
@@ -94,9 +96,11 @@ public class SearchProvider extends ContentProvider {
 				final int itemId = query.getInt(
 						query.getColumnIndex(BaseColumns._ID)
 				);
+
 				final String itemTitle = query.getString(
-						query.getColumnIndex(SearchContract.TitleSearchEntry.TITLE_COLUMN)
+						query.getColumnIndex(SearchContract.SearchEntry.TITLE_COLUMN)
 				);
+
 				cursor.addRow(new Object[]{ itemId, itemTitle, itemId });
 			} while (query.moveToNext());
 		}
@@ -105,11 +109,12 @@ public class SearchProvider extends ContentProvider {
 		return cursor;
 	}
 
-	private Cursor getSearchTermCursor(final SQLiteDatabase sqlite, final Uri uri) {
+	private Cursor getTitleSearchResultCursor(final SQLiteDatabase sqlite, final Uri uri) {
 		final int itemId = Integer.valueOf(uri.getLastPathSegment());
-		final Cursor query = sqlite.query(
+
+		return sqlite.query(
 				true,
-				SearchContract.TitleSearchEntry.TABLE_NAME_ITEMS,
+				SearchContract.SearchEntry.TABLE_NAME_ITEMS,
 				null,
 				BaseColumns._ID + "=?",
 				new String[] {
@@ -117,8 +122,21 @@ public class SearchProvider extends ContentProvider {
 				},
 				null, null, null, null
 		);
+	}
 
-		return query;
+	private Cursor getBodySearchResultCursor(final SQLiteDatabase sqlite, final Uri uri) {
+		final String text = uri.getLastPathSegment();
+
+		return sqlite.query(
+				true,
+				SearchContract.SearchEntry.TABLE_NAME_ITEMS,
+				null,
+				SearchContract.SearchEntry.ENGLISH_COLUMN + " LIKE ?",
+				new String[] {
+						String.valueOf("%" + text + "%")
+				},
+				null, null, null, null
+		);
 	}
 
 	@Nullable
@@ -150,13 +168,19 @@ public class SearchProvider extends ContentProvider {
 		matcher.addURI(
 				authority,
 				SearchContract.SEARCH_TERM_PATH,
-				SearchContract.TitleSearchEntry.SEARCH_TERM_URI_TYPE
+				SearchContract.SearchEntry.SEARCH_TERM_URI_TYPE
 		);
 
 		matcher.addURI(
 				authority,
 				SearchContract.SEARCH_SUGGEST_PATH,
-				SearchContract.TitleSearchEntry.SEARCH_SUGGEST_URI_TYPE
+				SearchContract.SearchEntry.SEARCH_SUGGEST_URI_TYPE
+		);
+
+		matcher.addURI(
+				authority,
+				SearchContract.SEARCH_TEXT_PATH + "/*",
+				SearchContract.SearchEntry.SEARCH_TEXT_URI_TYPE
 		);
 
 		return  matcher;

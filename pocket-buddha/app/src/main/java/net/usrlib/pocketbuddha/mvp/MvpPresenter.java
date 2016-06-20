@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import net.usrlib.pocketbuddha.provider.FeedContract;
+import net.usrlib.pocketbuddha.provider.SearchContract;
 import net.usrlib.pocketbuddha.service.FeedReceiver;
 import net.usrlib.pocketbuddha.service.FeedService;
 
@@ -25,8 +26,6 @@ public class MvpPresenter {
 	private FeedReceiver mFeedReceiver = null;
 	private boolean mHasInitLoader = false;
 	private Uri mLastDbQueryUri = null;
-
-//	private MvpModel.Cache mCache = new MvpModel.Cache();
 
 	public static final MvpPresenter getInstance() {
 		if (sInstance == null) {
@@ -208,20 +207,33 @@ public class MvpPresenter {
 		loaderManager.restartLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
 	}
 
-	public void requestItemFromSearchProvider(final AppCompatActivity app, final Uri uri) {
+	public void requestTitleSearch(final AppCompatActivity app, final Uri uri) {
+		requestSearch(app, uri);
+	}
+
+	public void requestTextSearch(final AppCompatActivity app, final String query) {
+		requestSearch(
+				app,
+				SearchContract.SearchEntry.SEARCH_TEXT_CONTENT_URI
+						.buildUpon()
+						.appendPath(query)
+						.build()
+		);
+	}
+
+	public void requestSearch(final AppCompatActivity app, final Uri uri) {
 		final MvpView mvpView = (MvpView) app;
 		final ContentResolver contentResolver = app.getContentResolver();
-		final int itemId = Integer.valueOf(uri.getLastPathSegment());
 
 		if (contentResolver == null || uri == null) {
-			mvpView.onTransactionError(TransactionType.TITLE_SEARCH);
+			mvpView.onTransactionError(TransactionType.SEARCH_ITEM);
 			return;
 		}
 
 		final LoaderManager loaderManager = app.getSupportLoaderManager();
 
 		if (loaderManager == null) {
-			mvpView.onTransactionError(TransactionType.TITLE_SEARCH);
+			mvpView.onTransactionError(TransactionType.SEARCH_ITEM);
 			return;
 		}
 
@@ -234,15 +246,12 @@ public class MvpPresenter {
 		// TODO: Does loader need a restart if already started for subsequent searches?
 		loaderManager.initLoader(MvpModel.DB_SEARCH_LOADER_ID, null, loaderHelper);
 	}
-//	public void saveItemsTitleListToCache(final List<String> itemList) {
-//		mCache.addTitleList(itemList);
-//	}
 
 	public static enum TransactionType {
 		FEED_SERVICE,
 		DB_BULK_INSERT,
 		DB_QUERY,
 		DB_UPDATE,
-		TITLE_SEARCH
+		SEARCH_ITEM
 	}
 }

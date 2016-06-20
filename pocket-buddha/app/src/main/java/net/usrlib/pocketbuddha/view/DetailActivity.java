@@ -66,10 +66,13 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 		// Determine which cursor results to request based on Intent Action
 		if (action.equals(Intent.ACTION_SEARCH)) {
 			startSearchResultsActivity(intent);
+
 		} else if (action.equals(Intent.ACTION_VIEW)) {
-			requestSearchResults(intent);
+			requestTitleSearchResults(intent);
+
 		} else if (action.equals(FavoritesActivity.ACTION)) {
 			requestFavorites();
+
 		} else {
 			MvpPresenter.getInstance().requestItemsFromDb(this);
 		}
@@ -259,10 +262,10 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 		});
 	}
 
-	private void requestSearchResults(final Intent intent) {
+	private void requestTitleSearchResults(final Intent intent) {
 		final Uri uri = Uri.parse(intent.getDataString());
 
-		MvpPresenter.getInstance().requestItemFromSearchProvider(this, uri);
+		MvpPresenter.getInstance().requestTitleSearch(this, uri);
 	}
 
 	private void requestFavorites() {

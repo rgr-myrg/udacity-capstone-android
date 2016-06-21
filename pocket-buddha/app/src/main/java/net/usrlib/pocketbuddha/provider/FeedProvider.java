@@ -8,9 +8,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import net.usrlib.pocketbuddha.data.DbHelper;
+import net.usrlib.pocketbuddha.sql.DbHelper;
 
 /**
  * Created by home on 6/6/16.

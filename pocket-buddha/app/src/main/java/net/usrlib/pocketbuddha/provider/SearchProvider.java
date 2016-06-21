@@ -11,7 +11,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
 
-import net.usrlib.pocketbuddha.data.DbHelper;
+import net.usrlib.pocketbuddha.sql.DbHelper;
 
 /**
  * Created by rgr-myrg on 6/8/16.

@@ -43,5 +43,6 @@
 		Unable to complete set up! Please check your network connection.
 	</string>
 
+    <string name="widget_title">Pali Daily Word</string>
 	<string name="ad_banner_unit_id">ca-app-pub-7237046001480876/6588891069</string>
 </resources>

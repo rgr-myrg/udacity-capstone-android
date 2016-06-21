@@ -17,7 +17,6 @@ public class SearchContract {
 	public static final String SEARCH_TEXT_PATH    = "search_text_query";
 
 	public static final class SearchEntry implements BaseColumns {
-
 		public static final String TABLE_NAME_ITEMS = "feed_items";
 		public static final String TITLE_COLUMN     = MvpModel.TITLE_COLUMN;
 		public static final String ENGLISH_COLUMN   = MvpModel.ENGLISH_COLUMN;

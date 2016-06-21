@@ -1,6 +1,7 @@
 package net.usrlib.pocketbuddha.mvp;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -246,11 +247,22 @@ public class MvpPresenter {
 		loaderManager.initLoader(MvpModel.DB_SEARCH_LOADER_ID, null, loaderHelper);
 	}
 
+	public void requestPaliWord(final MvpView mvpView, final Context context) {
+		final ContentResolver contentResolver = context.getContentResolver();
+
+		if (contentResolver == null) {
+			mvpView.onTransactionError(TransactionType.SEARCH_ITEM);
+			return;
+		}
+		mvpView.onTransactionSuccess(TransactionType.DAILY_WORD, Bundle.EMPTY);
+	}
+
 	public static enum TransactionType {
 		FEED_SERVICE,
 		DB_BULK_INSERT,
 		DB_QUERY,
 		DB_UPDATE,
-		SEARCH_ITEM
+		SEARCH_ITEM,
+		DAILY_WORD
 	}
 }

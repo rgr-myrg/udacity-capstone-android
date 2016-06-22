@@ -337,8 +337,6 @@ public class MvpModel implements Parcelable {
 				return null;
 			}
 
-			final int favorite = cursor.getInt(cursor.getColumnIndex(FAVORITE_COLUMN));
-
 			return new Dictionary(
 					cursor.getString(cursor.getColumnIndex(PALI_NAME_COLUMN)),
 					cursor.getString(cursor.getColumnIndex(PALI_TERM_COLUMN)),

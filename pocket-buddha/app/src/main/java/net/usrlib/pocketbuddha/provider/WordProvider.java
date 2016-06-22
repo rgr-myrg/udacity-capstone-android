@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import net.usrlib.pocketbuddha.sql.DbHelper;
 
@@ -27,10 +26,10 @@ public class WordProvider extends ContentProvider {
 	@Nullable
 	@Override
 	public Cursor query(Uri uri,
-	                    String[] projection,
-	                    String selection,
-	                    String[] selectionArgs,
-	                    String sortOrder) {
+						String[] projection,
+						String selection,
+						String[] selectionArgs,
+						String sortOrder) {
 		final int uriType = sUriMatcher.match(uri);
 		final DbHelper db = DbHelper.getInstance(getContext());
 
@@ -119,19 +118,16 @@ public class WordProvider extends ContentProvider {
 	}
 
 	public Cursor getNextDailyWord(final SQLiteDatabase sqlite, final Uri uri) {
-		final int itemId = Integer.valueOf(uri.getLastPathSegment());
+		final String itemId = uri.getLastPathSegment();
 
-		Log.d("WORD", "getNextDailyWord: " + uri);
-		Log.d("WORD", "getNextDailyWord itemId: " + itemId);
-
-		// SELECT * FROM table WHERE _id > itemId ORDER BY _id LIMIT 1
+		// SELECT * FROM table WHERE _id > itemId ORDER BY id LIMIT 1
 		return sqlite.query(
 				true,
 				WordContract.DictionaryEntry.TABLE_NAME,
 				null,
 				BaseColumns._ID + " > ?",
 				new String[] {
-						String.valueOf(itemId)
+						itemId
 				},
 				null, null,
 				BaseColumns._ID + " ASC",

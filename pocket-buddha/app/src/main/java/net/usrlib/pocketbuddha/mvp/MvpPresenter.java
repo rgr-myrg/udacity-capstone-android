@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,6 +19,7 @@ import net.usrlib.pocketbuddha.provider.SearchContract;
 import net.usrlib.pocketbuddha.provider.WordContract;
 import net.usrlib.pocketbuddha.service.FeedReceiver;
 import net.usrlib.pocketbuddha.service.FeedService;
+import net.usrlib.pocketbuddha.util.Preferences;
 
 import org.json.JSONException;
 
@@ -314,23 +316,30 @@ public class MvpPresenter {
 		final ContentResolver contentResolver = context.getContentResolver();
 
 		if (contentResolver == null) {
-			mvpView.onTransactionError(TransactionType.DB_QUERY);
+			mvpView.onTransactionError(TransactionType.DAILY_WORD);
 			return;
 		}
 
 		final Cursor cursor = contentResolver.query(
 				WordContract.DictionaryEntry.DAILY_WORD_CONTENT_URI.buildUpon()
-						.appendPath("1")
+						.appendPath(String.valueOf(Preferences.getCurrentWordItemId(context)))
 						.build(),
 				null, null, null, null
 		);
 
 		if (cursor == null) {
-			mvpView.onTransactionError(TransactionType.DB_QUERY);
+			mvpView.onTransactionError(TransactionType.DAILY_WORD);
 			return;
 		}
 
-		mvpView.onTransactionSuccess(TransactionType.DAILY_WORD, Bundle.EMPTY);
+		// Grab the first item
+		cursor.moveToFirst();
+
+		final int itemId = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
+		Log.d(NAME, "itemId: " + itemId);
+
+		Preferences.setCurrentWordItemId(context, itemId);
+		mvpView.onTransactionCursorReady(cursor);
 	}
 
 	public static enum TransactionType {

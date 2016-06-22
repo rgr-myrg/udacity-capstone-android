@@ -28,7 +28,7 @@ public final class FeedContract {
 				.appendPath(PATH_ITEMS)
 				.build();
 
-		public static final Uri CONTENT_BULK_INSERT_URI = BASE_CONTENT_URI
+		public static final Uri BULK_INSERT_CONTENT_URI = BASE_CONTENT_URI
 				.buildUpon()
 				.appendPath(PATH_ITEMS_INSERT_BULK)
 				.build();

@@ -4,10 +4,12 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import net.usrlib.pocketbuddha.sql.DbHelper;
 
@@ -45,7 +47,7 @@ public class WordProvider extends ContentProvider {
 		Cursor cursor = null;
 
 		switch (uriType) {
-			case WordContract.WordEntry.DAILY_WORD_URI_TYPE:
+			case WordContract.DictionaryEntry.DAILY_WORD_URI_TYPE:
 				cursor = getNextDailyWord(sqlite, uri);
 				break;
 		}
@@ -75,20 +77,64 @@ public class WordProvider extends ContentProvider {
 		return 0;
 	}
 
+	@Override
+	public int bulkInsert(Uri uri, ContentValues[] values) {
+		int rowsInserted  = 0;
+		final int uriType = sUriMatcher.match(uri);
+
+		String table = null;
+
+		switch (uriType) {
+			case WordContract.DictionaryEntry.BULK_INSERT_URI_TYPE:
+				table = WordContract.DictionaryEntry.TABLE_NAME;
+				break;
+		}
+
+		if (table == null) {
+			return -1;
+		}
+
+		final DbHelper dbHelper = DbHelper.getInstance(getContext());
+		final SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+		db.beginTransaction();
+
+		try {
+			for (ContentValues item : values) {
+				long newID = db.insertOrThrow(table, null, item);
+
+				if (newID <= 0) {
+					throw new SQLException("Failed to insert row into " + table);
+				}
+			}
+
+			db.setTransactionSuccessful();
+			rowsInserted = values.length;
+
+		} finally {
+			db.endTransaction();
+		}
+
+		return rowsInserted;
+	}
+
 	public Cursor getNextDailyWord(final SQLiteDatabase sqlite, final Uri uri) {
 		final int itemId = Integer.valueOf(uri.getLastPathSegment());
 
-		// SELECT * FROM word_items WHERE _id > itemId ORDER BY _id LIMIT 1
+		Log.d("WORD", "getNextDailyWord: " + uri);
+		Log.d("WORD", "getNextDailyWord itemId: " + itemId);
+
+		// SELECT * FROM table WHERE _id > itemId ORDER BY _id LIMIT 1
 		return sqlite.query(
 				true,
-				WordContract.WordEntry.TABLE_NAME,
+				WordContract.DictionaryEntry.TABLE_NAME,
 				null,
 				BaseColumns._ID + " > ?",
 				new String[] {
 						String.valueOf(itemId)
 				},
 				null, null,
-				BaseColumns._ID + "ASC",
+				BaseColumns._ID + " ASC",
 				"1"
 		);
 	}
@@ -100,7 +146,13 @@ public class WordProvider extends ContentProvider {
 		matcher.addURI(
 				authority,
 				WordContract.DAILY_WORD_PATH,
-				WordContract.WordEntry.DAILY_WORD_URI_TYPE
+				WordContract.DictionaryEntry.DAILY_WORD_URI_TYPE
+		);
+
+		matcher.addURI(
+				authority,
+				WordContract.BULK_INSERT_PATH,
+				WordContract.DictionaryEntry.BULK_INSERT_URI_TYPE
 		);
 
 		return  matcher;

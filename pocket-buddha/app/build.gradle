@@ -1,8 +1,7 @@
 apply plugin: 'com.android.application'
 
 def FEED_PAGER_END_POINT = FEED_PAGER_END_POINT
-def LIST_SEARCH_END_POINT = LIST_SEARCH_END_POINT
-def TEXT_SEARCH_END_POINT = TEXT_SEARCH_END_POINT
+def PALI_TERMS_END_POINT = PALI_TERMS_END_POINT
 def POCKET_BUDDHA_API_KEY = POCKET_BUDDHA_API_KEY
 
 android {
@@ -16,8 +15,7 @@ android {
 		versionCode 1
 		versionName "1.0"
 		buildConfigField "String", "FEED_PAGER_END_POINT", FEED_PAGER_END_POINT
-		buildConfigField "String", "LIST_SEARCH_END_POINT", LIST_SEARCH_END_POINT
-		buildConfigField "String", "TEXT_SEARCH_END_POINT", TEXT_SEARCH_END_POINT
+		buildConfigField "String", "PALI_TERMS_END_POINT", PALI_TERMS_END_POINT
 		buildConfigField "String", "POCKET_BUDDHA_API_KEY", POCKET_BUDDHA_API_KEY
 	}
 

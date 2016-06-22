@@ -10,6 +10,9 @@ import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
+
+import net.usrlib.pocketbuddha.provider.WordContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -250,6 +253,98 @@ public class MvpModel implements Parcelable {
 		@Override
 		public void onLoaderReset(Loader<Cursor> loader) {
 
+		}
+	}
+
+	public static class Dictionary {
+		public static final String PALI_NAME_COLUMN  = "name";
+		public static final String PALI_TERM_COLUMN  = "term";
+		public static final String DEFINITION_COLUMN = "definition";
+		public static final String FAVORITE_COLUMN   = "favorite";
+		public static final String TIMESTAMP_COLUMN  = "timestamp";
+
+		private String name;
+		private String term;
+		private String definition;
+		private boolean favorite;
+
+		public Dictionary(String name, String term, String definition, boolean favorite) {
+			this.name = name;
+			this.term = term;
+			this.definition = definition;
+			this.favorite = favorite;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getTerm() {
+			return term;
+		}
+
+		public String getDefinition() {
+			return definition;
+		}
+
+		public ContentValues toContentValues() {
+			ContentValues values = new ContentValues();
+
+			values.put(PALI_NAME_COLUMN, name);
+			values.put(PALI_TERM_COLUMN, term);
+			values.put(DEFINITION_COLUMN, definition);
+			values.put(FAVORITE_COLUMN, favorite);
+
+			return values;
+		}
+
+		public static ContentValues[] fromJsonStringAsContentValues(final String jsonString)
+				throws JSONException {
+			final JSONArray jsonArray  = new JSONArray(jsonString);
+			final ContentValues[] list = new ContentValues[jsonArray.length()];
+
+			for (int i = 0; i < jsonArray.length(); i++) {
+				try {
+					list[i] = fromJsonObject(jsonArray.getJSONObject(i)).toContentValues();
+				} catch (JSONException e) {
+					e.printStackTrace();
+					continue;
+				}
+			}
+
+			return list;
+		}
+
+		public static Dictionary fromJsonObject(final JSONObject jsonObject) throws JSONException {
+			if (jsonObject == null) {
+				return null;
+			}
+
+			Dictionary item = null;
+
+			item = new Dictionary(
+					jsonObject.getString(PALI_NAME_COLUMN),
+					jsonObject.getString(PALI_TERM_COLUMN),
+					jsonObject.getString(DEFINITION_COLUMN),
+					false
+			);
+
+			return item;
+		}
+
+		public static Dictionary fromDbCursor(final Cursor cursor) {
+			if (cursor == null) {
+				return null;
+			}
+
+			final int favorite = cursor.getInt(cursor.getColumnIndex(FAVORITE_COLUMN));
+
+			return new Dictionary(
+					cursor.getString(cursor.getColumnIndex(PALI_NAME_COLUMN)),
+					cursor.getString(cursor.getColumnIndex(PALI_TERM_COLUMN)),
+					cursor.getString(cursor.getColumnIndex(DEFINITION_COLUMN)),
+					cursor.getInt(cursor.getColumnIndex(FAVORITE_COLUMN)) == 1
+			);
 		}
 	}
 }

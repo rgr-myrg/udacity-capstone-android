@@ -1,16 +1,21 @@
 package net.usrlib.pocketbuddha.mvp;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
+import net.usrlib.pocketbuddha.BuildConfig;
 import net.usrlib.pocketbuddha.provider.FeedContract;
 import net.usrlib.pocketbuddha.provider.SearchContract;
+import net.usrlib.pocketbuddha.provider.WordContract;
 import net.usrlib.pocketbuddha.service.FeedReceiver;
 import net.usrlib.pocketbuddha.service.FeedService;
 
@@ -20,6 +25,7 @@ import org.json.JSONException;
  * Created by rgr-myrg on 6/7/16.
  */
 public class MvpPresenter {
+	public static final String NAME = MvpPresenter.class.getSimpleName();
 	public static final String TRANSACTION_TYPE_KEY = "transactionType";
 
 	private static MvpPresenter sInstance = null;
@@ -39,26 +45,44 @@ public class MvpPresenter {
 		return mLastDbQueryUri;
 	}
 
-	public void requestFeedService(final AppCompatActivity app) {
+	public void requestFeedDownloadService(final AppCompatActivity app) {
+		requestEndPointTransaction(
+				app,
+				BuildConfig.FEED_PAGER_END_POINT + "?pg=all",
+				TransactionType.DOWNLOAD_FEED_ITEMS_SERVICE
+		);
+	}
+
+	public void requestDictionaryDownloadService(final AppCompatActivity app) {
+		requestEndPointTransaction(
+				app,
+				BuildConfig.PALI_TERMS_END_POINT,
+				TransactionType.DOWNLOAD_DICTIONARY_SERVICE
+		);
+	}
+
+	public void requestEndPointTransaction(final AppCompatActivity app,
+	                                       final String url,
+	                                       final TransactionType type) {
 		final MvpView mvpView = (MvpView) app;
 
 		mFeedReceiver = new FeedReceiver(new Handler());
-
 		mFeedReceiver.setCallback(new FeedReceiver.OnReceiveResult() {
 			@Override
 			public void onComplete(int resultCode, Bundle resultData) {
 				switch (resultCode) {
 					case FeedService.FINISHED:
+						Log.i(NAME, "onComplete invoking onTransactionSuccess");
 						mvpView.onTransactionSuccess(
-								TransactionType.FEED_SERVICE,
+								type,
 								resultData
 						);
 
 						break;
 
 					case FeedService.ERROR:
-						mvpView.onTransactionError(TransactionType.FEED_SERVICE);
-
+						Log.i(NAME, "onComplete invoking onTransactionError");
+						mvpView.onTransactionError(type);
 						break;
 				}
 			}
@@ -68,51 +92,28 @@ public class MvpPresenter {
 
 		intent.putExtra(FeedReceiver.NAME, mFeedReceiver);
 		intent.putExtra(FeedService.COMMAND_KEY, FeedService.FETCH_COMMAND);
+		intent.putExtra(FeedService.END_POINT_KEY, url);
 
 		app.startService(intent);
 
-		mvpView.onTransactionProgress(TransactionType.FEED_SERVICE);
+		mvpView.onTransactionProgress(type);
 	}
 
-	public void requestDbBulkInsert(final AppCompatActivity app, final Bundle data) {
-		final MvpView mvpView = (MvpView) app;
-		final ContentResolver contentResolver = app.getContentResolver();
+	public void requestBulkInsertWithFeedItems(final AppCompatActivity app, final Bundle data) {
+		requestDbBulkInsert(
+				app,
+				data,
+				TransactionType.DB_FEED_ITEMS_BULK_INSERT
+		);
+	}
 
-		if (data == null || data == Bundle.EMPTY || contentResolver == null) {
-			mvpView.onTransactionError(TransactionType.DB_BULK_INSERT);
-			return;
-		}
-
-		final String jsonDataString = data.getString(FeedService.DATA_RESULT);
-
-		if (jsonDataString == null) {
-			mvpView.onTransactionError(TransactionType.DB_BULK_INSERT);
-			return;
-		}
-
-		// Notify the View of progress
-		mvpView.onTransactionProgress(TransactionType.DB_BULK_INSERT);
-
-		try {
-			final int rowCount = contentResolver.bulkInsert(
-					FeedContract.ItemsEntry.CONTENT_BULK_INSERT_URI,
-					MvpModel.fromJsonStringAsContentValues(jsonDataString)
-			);
-
-			if (rowCount > 0) {
-				mvpView.onTransactionSuccess(
-						TransactionType.DB_BULK_INSERT,
-						Bundle.EMPTY
-				);
-
-				contentResolver.notifyChange(FeedContract.ItemsEntry.CONTENT_BULK_INSERT_URI, null);
-			} else {
-				mvpView.onTransactionError(TransactionType.DB_BULK_INSERT);
-			}
-		} catch (JSONException e) {
-			mvpView.onTransactionError(TransactionType.DB_BULK_INSERT);
-			e.printStackTrace();
-		}
+	public void requestBulkInsertWithDictionaryItems(final AppCompatActivity app,
+	                                                 final Bundle data) {
+		requestDbBulkInsert(
+				app,
+				data,
+				TransactionType.DB_DICTIONARY_BULK_INSERT
+		);
 	}
 
 	public void requestItemsFromDb(final AppCompatActivity app) {
@@ -141,6 +142,68 @@ public class MvpPresenter {
 		requestLoaderManagerForDbQuery(
 				app, FeedContract.ItemsEntry.CONTENT_FAVORITES_BY_DATE_DESC_URI
 		);
+	}
+
+	public void requestDbBulkInsert(final AppCompatActivity app,
+	                                final Bundle data,
+	                                final TransactionType type) {
+		final MvpView mvpView = (MvpView) app;
+		final ContentResolver contentResolver = app.getContentResolver();
+
+		if (data == null || data == Bundle.EMPTY || contentResolver == null) {
+			mvpView.onTransactionError(type);
+			return;
+		}
+
+		final String jsonDataString = data.getString(FeedService.DATA_RESULT);
+
+		if (jsonDataString == null) {
+			mvpView.onTransactionError(type);
+			return;
+		}
+
+		Uri uri = null;
+		ContentValues[] values = null;
+
+		try {
+			switch (type) {
+				case DB_FEED_ITEMS_BULK_INSERT:
+					uri = FeedContract.ItemsEntry.BULK_INSERT_CONTENT_URI;
+					values = MvpModel.fromJsonStringAsContentValues(jsonDataString);
+					break;
+				case DB_DICTIONARY_BULK_INSERT:
+					uri = WordContract.DictionaryEntry.BULK_INSERT_CONTENT_URI;
+					values = MvpModel.Dictionary.fromJsonStringAsContentValues(jsonDataString);
+					break;
+				default:
+					Log.w(NAME, "requestDbBulkInsert uri not supported. " + uri);
+					break;
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		if (uri == null || values == null) {
+			mvpView.onTransactionError(type);
+			return;
+		}
+
+		Log.i(NAME, "requestDbBulkInsert " + uri);
+
+		// Notify the View of progress
+		mvpView.onTransactionProgress(type);
+
+		final int rowCount = contentResolver.bulkInsert(uri, values);
+
+		if (rowCount > 0) {
+			contentResolver.notifyChange(uri, null);
+			mvpView.onTransactionSuccess(
+					type,
+					Bundle.EMPTY
+			);
+		} else {
+			mvpView.onTransactionError(type);
+		}
 	}
 
 	public void requestItemUpdate(final AppCompatActivity app, final MvpModel data) {
@@ -251,15 +314,30 @@ public class MvpPresenter {
 		final ContentResolver contentResolver = context.getContentResolver();
 
 		if (contentResolver == null) {
-			mvpView.onTransactionError(TransactionType.SEARCH_ITEM);
+			mvpView.onTransactionError(TransactionType.DB_QUERY);
 			return;
 		}
+
+		final Cursor cursor = contentResolver.query(
+				WordContract.DictionaryEntry.DAILY_WORD_CONTENT_URI.buildUpon()
+						.appendPath("1")
+						.build(),
+				null, null, null, null
+		);
+
+		if (cursor == null) {
+			mvpView.onTransactionError(TransactionType.DB_QUERY);
+			return;
+		}
+
 		mvpView.onTransactionSuccess(TransactionType.DAILY_WORD, Bundle.EMPTY);
 	}
 
 	public static enum TransactionType {
-		FEED_SERVICE,
-		DB_BULK_INSERT,
+		DOWNLOAD_FEED_ITEMS_SERVICE,
+		DOWNLOAD_DICTIONARY_SERVICE,
+		DB_FEED_ITEMS_BULK_INSERT,
+		DB_DICTIONARY_BULK_INSERT,
 		DB_QUERY,
 		DB_UPDATE,
 		SEARCH_ITEM,

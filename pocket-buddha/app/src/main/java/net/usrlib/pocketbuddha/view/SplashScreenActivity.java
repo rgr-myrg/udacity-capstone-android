@@ -1,5 +1,6 @@
 package net.usrlib.pocketbuddha.view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -28,23 +29,37 @@ public class SplashScreenActivity extends AppCompatActivity implements MvpView {
 
 		mMessageTextView = (TextView) findViewById(R.id.splash_screen_message_textview);
 
-		if (!Preferences.hasDataInstall(getApplicationContext())) {
-			loadWelcomeImage();
-			MvpPresenter.getInstance().requestFeedService(this);
-		} else {
+		final Context context = getApplicationContext();
+
+		loadWelcomeImage();
+
+		if (Preferences.hasDataInstall(context) && Preferences.hasDictionaryInstall(context)) {
 			startHomeActivity();
+		} else {
+			MvpPresenter.getInstance().requestFeedDownloadService(this);
+//			MvpPresenter.getInstance().requestDictionaryDownloadService(this);
 		}
 	}
 
 	@Override
 	public void onTransactionSuccess(MvpPresenter.TransactionType type, Bundle bundle) {
 		switch (type) {
-			case FEED_SERVICE:
-				MvpPresenter.getInstance().requestDbBulkInsert(this, bundle);
+			case DOWNLOAD_FEED_ITEMS_SERVICE:
+				MvpPresenter.getInstance().requestBulkInsertWithFeedItems(this, bundle);
 				break;
 
-			case DB_BULK_INSERT:
+			case DOWNLOAD_DICTIONARY_SERVICE:
+				MvpPresenter.getInstance().requestBulkInsertWithDictionaryItems(this, bundle);
+				break;
+
+			case DB_FEED_ITEMS_BULK_INSERT:
 				Preferences.setHasDataInstall(getApplicationContext(), true);
+				// TODO: Add a request queue in Presenter. Chain request here for now:
+				MvpPresenter.getInstance().requestDictionaryDownloadService(this);
+				break;
+
+			case DB_DICTIONARY_BULK_INSERT:
+				Preferences.setHasDictionaryInstall(getApplicationContext(), true);
 				startHomeActivity();
 				break;
 		}
@@ -52,7 +67,7 @@ public class SplashScreenActivity extends AppCompatActivity implements MvpView {
 
 	@Override
 	public void onTransactionProgress(MvpPresenter.TransactionType type) {
-		if (type == MvpPresenter.TransactionType.DB_BULK_INSERT) {
+		if (type == MvpPresenter.TransactionType.DB_FEED_ITEMS_BULK_INSERT) {
 			displayMessage(R.string.splash_screen_progress_msg);
 		}
 	}

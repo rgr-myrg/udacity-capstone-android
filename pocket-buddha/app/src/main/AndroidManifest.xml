@@ -56,7 +56,6 @@
 			android:launchMode="singleTop"
 			android:theme="@style/AppTheme.NoActionBar">
 			<intent-filter>
-				<!--<action android:name="android.intent.action.MAIN"/>-->
 				<action android:name="android.intent.action.SEARCH"/>
 				<category android:name="android.intent.category.INFO"/>
 			</intent-filter>
@@ -90,6 +89,9 @@
 		</activity>
 
 		<service android:name=".service.FeedService"/>
+		<service
+			android:name=".widget.WidgetRemoteService"
+			android:permission="android.permission.BIND_REMOTEVIEWS" />
 
 		<provider
 			android:authorities="net.usrlib.pocketbuddha.provider"
@@ -107,7 +109,7 @@
 			android:exported="false"/>
 
 		<receiver
-			android:name=".widget.DailyWidgetProvider"
+			android:name=".widget.WidgetProvider"
 			android:label="@string/widget_title">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -115,6 +117,9 @@
 			<meta-data
 				android:name="android.appwidget.provider"
 				android:resource="@xml/widget_info"/>
+			<meta-data
+				android:name="LauncherMetadata.Requirements.Scrollable"
+				android:value="true" />
 		</receiver>
 
 	</application>

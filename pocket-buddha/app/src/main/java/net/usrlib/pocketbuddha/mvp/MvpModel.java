@@ -10,9 +10,6 @@ import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
-
-import net.usrlib.pocketbuddha.provider.WordContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -257,6 +254,7 @@ public class MvpModel implements Parcelable {
 	}
 
 	public static class Dictionary {
+		public static final String NAME = Dictionary.class.getSimpleName();
 		public static final String PALI_NAME_COLUMN  = "name";
 		public static final String PALI_TERM_COLUMN  = "term";
 		public static final String DEFINITION_COLUMN = "definition";

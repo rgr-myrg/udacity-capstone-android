@@ -50,7 +50,7 @@ public class MvpPresenter {
 	public void requestFeedDownloadService(final AppCompatActivity app) {
 		requestEndPointTransaction(
 				app,
-				BuildConfig.FEED_PAGER_END_POINT + "?pg=all",
+				BuildConfig.FEED_PAGER_END_POINT,
 				TransactionType.DOWNLOAD_FEED_ITEMS_SERVICE
 		);
 	}
@@ -336,7 +336,6 @@ public class MvpPresenter {
 		cursor.moveToFirst();
 
 		final int itemId = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-		Log.d(NAME, "itemId: " + itemId);
 
 		Preferences.setCurrentWordItemId(context, itemId);
 		mvpView.onTransactionCursorReady(cursor);

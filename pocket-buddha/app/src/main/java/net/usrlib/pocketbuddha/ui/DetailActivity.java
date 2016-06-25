@@ -1,4 +1,4 @@
-package net.usrlib.pocketbuddha.view;
+package net.usrlib.pocketbuddha.ui;
 
 import android.content.Intent;
 import android.database.Cursor;

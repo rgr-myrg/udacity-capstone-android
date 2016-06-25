@@ -15,5 +15,5 @@
 	<dimen name="splash_screen_image_size">275dp</dimen>
 
 	<dimen name="widget_default_height">110dp</dimen>
-	<dimen name="widget_default_width">180dp</dimen>
+	<dimen name="widget_default_width">250dp</dimen>
 </resources>

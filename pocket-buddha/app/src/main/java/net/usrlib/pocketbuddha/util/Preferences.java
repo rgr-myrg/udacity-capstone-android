@@ -60,5 +60,6 @@ public class Preferences {
 		final SharedPreferences.Editor editor = preferences.edit();
 
 		editor.putInt(key, value);
+		editor.commit();
 	}
 }

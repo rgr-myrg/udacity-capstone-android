@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical">
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  xmlns:tools="http://schemas.android.com/tools"
+			  android:orientation="vertical">
 
 	<ListView
 		android:id="@+id/widget_list"
@@ -16,92 +16,9 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:gravity="center"
-		android:text="EMPTY VIEW"
+		android:text="@string/widget_empty_msg"
 		android:textColor="#ffffff"
 		android:textSize="20sp"
 		android:visibility="gone" />
 
 </LinearLayout>
-
-<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-			  <!--xmlns:tools="http://schemas.android.com/tools"-->
-			  <!--android:layout_width="match_parent"-->
-			  <!--android:layout_height="match_parent"-->
-			  <!--android:orientation="horizontal"-->
-			  <!--android:padding="0dp">-->
-	<!--<FrameLayout-->
-		<!--android:id="@+id/widget_icon"-->
-		<!--android:layout_width="wrap_content"-->
-		<!--android:layout_height="wrap_content">-->
-		<!--<ImageView-->
-			<!--android:layout_width="wrap_content"-->
-			<!--android:layout_height="wrap_content"-->
-			<!--android:contentDescription="@string/app_name"-->
-			<!--android:layout_gravity="top"-->
-			<!--android:src="@mipmap/ic_launcher"/>-->
-	<!--</FrameLayout>-->
-	<!--<FrameLayout-->
-		<!--android:layout_width="match_parent"-->
-		<!--android:layout_height="wrap_content"-->
-		<!--android:layout_weight="1"-->
-		<!--android:background="#FFFFFF">-->
-		<!--<ListView-->
-			<!--android:id="@+id/widget_list"-->
-			<!--android:layout_width="match_parent"-->
-			<!--android:layout_height="match_parent"-->
-			<!--android:divider="@null"-->
-			<!--android:dividerHeight="0dp"-->
-			<!--tools:listitem="@layout/widget_detail_list_item"/>-->
-	<!--</FrameLayout>-->
-
-<!--</LinearLayout>-->
-
-<!--<LinearLayout-->
-	<!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-	<!--android:layout_width="match_parent"-->
-	<!--android:layout_height="match_parent"-->
-	<!--android:orientation="horizontal">-->
-
-	<!--<ImageView-->
-		<!--android:id="@+id/daily_widget_image"-->
-		<!--android:layout_width="wrap_content"-->
-		<!--android:layout_height="wrap_content"-->
-		<!--android:padding="8dp"-->
-		<!--android:layout_gravity="top"-->
-		<!--android:src="@mipmap/ic_launcher"/>-->
-
-	<!--<LinearLayout-->
-		<!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-		<!--android:layout_width="match_parent"-->
-		<!--android:layout_height="match_parent"-->
-		<!--android:layout_weight="1"-->
-		<!--android:background="#FFFFFF"-->
-		<!--android:orientation="vertical">-->
-		<!--<TextView-->
-			<!--android:id="@+id/daily_widget_text"-->
-			<!--android:layout_width="match_parent"-->
-			<!--android:layout_height="wrap_content"-->
-			<!--android:layout_gravity="top"-->
-			<!--android:gravity="center"-->
-			<!--android:padding="3dp"-->
-			<!--android:text="word"-->
-			<!--android:textStyle="bold"-->
-			<!--android:background="@color/pariyatti"-->
-			<!--style="@style/Base.TextAppearance.AppCompat.Medium.Inverse"/>-->
-		<!--<TextView-->
-			<!--android:id="@+id/daily_widget_text_description"-->
-			<!--android:layout_width="match_parent"-->
-			<!--android:layout_height="wrap_content"-->
-			<!--android:layout_gravity="top"-->
-			<!--android:gravity="start"-->
-			<!--android:padding="3dp"-->
-			<!--android:text="description"-->
-			<!--style="@style/Base.TextAppearance.AppCompat.Medium"/>-->
-		<!--<Button-->
-			<!--android:id="@+id/widget_button"-->
-			<!--android:layout_width="match_parent"-->
-			<!--android:layout_height="wrap_content"-->
-			<!--android:layout_gravity="bottom"-->
-			<!--android:text="R"/>-->
-		<!--</LinearLayout>-->
-<!--</LinearLayout>-->

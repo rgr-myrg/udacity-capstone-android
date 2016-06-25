@@ -332,9 +332,6 @@ public class MvpPresenter {
 			return;
 		}
 
-		// Grab the first item
-		cursor.moveToFirst();
-
 		final int itemId = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
 
 		Preferences.setCurrentWordItemId(context, itemId);

@@ -120,14 +120,28 @@ public class WordProvider extends ContentProvider {
 	public Cursor getNextDailyWord(final SQLiteDatabase sqlite, final Uri uri) {
 		final String itemId = uri.getLastPathSegment();
 
+		Cursor cursor = selectNextRow(sqlite, WordContract.DictionaryEntry.TABLE_NAME, itemId);
+
+		if (!cursor.moveToFirst() || cursor.getCount() == 0) {
+			// Restart selecting at the zero id (first) position.
+			cursor = selectNextRow(sqlite, WordContract.DictionaryEntry.TABLE_NAME, "0");
+			cursor.moveToFirst();
+		}
+
+		return cursor;
+	}
+
+	public Cursor selectNextRow(final SQLiteDatabase sqlite,
+								final String tableName,
+								final String nextId) {
 		// SELECT * FROM table WHERE _id > itemId ORDER BY id LIMIT 1
 		return sqlite.query(
 				true,
-				WordContract.DictionaryEntry.TABLE_NAME,
+				tableName,
 				null,
 				BaseColumns._ID + " > ?",
 				new String[] {
-						itemId
+						nextId
 				},
 				null, null,
 				BaseColumns._ID + " ASC",

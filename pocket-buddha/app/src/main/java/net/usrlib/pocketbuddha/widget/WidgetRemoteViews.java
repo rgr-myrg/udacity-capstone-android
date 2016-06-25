@@ -60,7 +60,7 @@ public class WidgetRemoteViews implements RemoteViewsService.RemoteViewsFactory,
 		remoteView.setTextViewText(
 				R.id.daily_widget_term,
 				Html.fromHtml(
-						listItem.getAsString(WordContract.DictionaryEntry.PALI_TERM_COLUMN)
+						listItem.getAsString(WordContract.DictionaryEntry.PALI_TERM_COLUMN) + ":"
 				)
 		);
 

@@ -15,6 +15,7 @@ import net.usrlib.pocketbuddha.mvp.MvpModel;
  * Created by rgr-myrg on 6/8/16.
  */
 public class DetailFragment extends Fragment {
+	public static final String NAME = DetailFragment.class.getSimpleName();
 	private MvpModel mData = null;
 	private View mRootView = null;
 
@@ -31,6 +32,10 @@ public class DetailFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+
+		if (savedInstanceState != null) {
+			mData = savedInstanceState.getParcelable(NAME);
+		}
 	}
 
 	@Nullable
@@ -49,6 +54,12 @@ public class DetailFragment extends Fragment {
 		getParentActivity().bindDataToView(mRootView, mData);
 
 		return mRootView;
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(NAME, mData);
 	}
 
 	private DetailActivity getParentActivity() {

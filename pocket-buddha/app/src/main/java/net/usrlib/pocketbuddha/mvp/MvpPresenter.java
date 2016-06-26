@@ -263,13 +263,19 @@ public class MvpPresenter {
 				mvpView
 		);
 
-		if (!mHasInitLoader) {
-			loaderManager.initLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
-			mHasInitLoader = true;
-			return;
-		}
+		Log.d(NAME, "mHasInitLoader: " + mHasInitLoader);
 
-		loaderManager.restartLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
+		// Init Loader for Updates invariably
+		if (uri.equals(FeedContract.ItemsEntry.CONTENT_ITEM_UPDATE_URI)) {
+			loaderManager.initLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
+		} else {
+			if (!mHasInitLoader) {
+				mHasInitLoader = true;
+				loaderManager.initLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
+			} else {
+				loaderManager.restartLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
+			}
+		}
 	}
 
 	public void requestTitleSearch(final AppCompatActivity app, final Uri uri) {

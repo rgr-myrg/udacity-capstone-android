@@ -10,6 +10,7 @@ import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -224,6 +225,8 @@ public class MvpModel implements Parcelable {
 		private MvpView mMvpView = null;
 
 		public LoaderHelper(Context context, Uri queryUri, MvpView mvpView) {
+			Log.d("LoaderHelper", "Constructor");
+
 			this.mContext  = context;
 			this.mQueryUri = queryUri;
 			this.mMvpView  = mvpView;
@@ -231,6 +234,8 @@ public class MvpModel implements Parcelable {
 
 		@Override
 		public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+			Log.d("LoaderHelper", "onCreateLoader");
+
 			return new CursorLoader(
 					mContext,
 					mQueryUri,
@@ -240,6 +245,7 @@ public class MvpModel implements Parcelable {
 
 		@Override
 		public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+			Log.d("LoaderHelper", "onLoadFinished");
 			mMvpView.onTransactionCursorReady(data);
 
 			mContext  = null;
@@ -249,7 +255,10 @@ public class MvpModel implements Parcelable {
 
 		@Override
 		public void onLoaderReset(Loader<Cursor> loader) {
+			Log.d("LoaderHelper", "onLoaderReset");
 
+			// Loader's data is now unavailable. Remove any references to the old cursor?
+			// mMvpView.onTransactionCursorReady(null);
 		}
 	}
 

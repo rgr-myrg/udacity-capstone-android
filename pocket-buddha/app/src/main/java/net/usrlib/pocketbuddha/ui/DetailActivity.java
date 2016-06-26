@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -54,8 +55,17 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 
 		mRootView = findViewById(android.R.id.content);
 
-		mAdapterPosition = intent.getIntExtra(MvpModel.POSITION_KEY, 0);
+		mAdapterPosition = savedInstanceState == null
+				? intent.getIntExtra(MvpModel.POSITION_KEY, 0)
+				: savedInstanceState.getInt(MvpModel.POSITION_KEY);
 
+		if (savedInstanceState == null) {
+			Log.d("DETAIL", "is null");
+		} else {
+			Log.d("DETAIL", "NOT null");
+		}
+
+		Log.d("DETAIL", "mAdapterPosition: " + mAdapterPosition);
 		final String action = intent.getAction();
 
 		if (action == null) {
@@ -76,6 +86,12 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 		} else {
 			MvpPresenter.getInstance().requestItemsFromDb(this);
 		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(MvpModel.POSITION_KEY, mViewPager.getCurrentItem());
 	}
 
 	public void bindDataToView(final View view, final MvpModel data) {
@@ -214,6 +230,11 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 			return;
 		}
 
+		// Keep track of current position
+		if (mViewPager != null) {
+			mAdapterPosition = mViewPager.getCurrentItem();
+		}
+
 		final int msgId = mData.isFavorite()
 				? R.string.msg_favorite_success
 				: R.string.msg_favorite_removed;
@@ -222,7 +243,11 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 
 		//TODO: Get last transaction ??? Figure out if view should be updated. Ex: Came from search result
 		// Refresh this view's data for DB_UPDATE transactions
+		Log.d("DETAIL", "invking requestItemsFromDb");
 		MvpPresenter.getInstance().requestItemsFromDb(this);
+
+		// Data has changed. Restart the loader to do a new query
+		// getLoaderManager().restartLoader(MvpModel.DB_QUERY_LOADER_ID, null, null);
 	}
 
 	@Override
@@ -232,6 +257,7 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 
 	@Override
 	public void onTransactionCursorReady(Cursor cursor) {
+		Log.d("DETAIL", "onTransactionCursorReady");
 		mCursor = cursor;
 		mData = getItem(mAdapterPosition);
 
@@ -243,8 +269,13 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 	}
 
 	private void initViewPager(final int position, final Cursor cursor) {
-		if (mPagerAdapter != null) {
+		Log.d("DETAIL", "initViewPager");
+
+		if (mPagerAdapter != null && mViewPager != null) {
+			Log.d("DETAIL", "initViewPager invoking changeCursor");
 			mPagerAdapter.changeCursor(cursor);
+			mViewPager.setCurrentItem(position);
+
 			return;
 		}
 

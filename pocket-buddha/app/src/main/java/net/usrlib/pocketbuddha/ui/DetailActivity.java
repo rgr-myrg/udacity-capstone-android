@@ -14,9 +14,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
@@ -94,37 +92,37 @@ public class DetailActivity extends AppCompatActivity implements MvpView {
 		outState.putInt(MvpModel.POSITION_KEY, mViewPager.getCurrentItem());
 	}
 
-	public void bindDataToView(final View view, final MvpModel data) {
-		if (data == null) {
-			return;
-		}
-
-		final ImageView image  = (ImageView) view.findViewById(R.id.detail_item_image);
-		final ImageView icon   = (ImageView) view.findViewById(R.id.detail_item_favorite_icon);
-		final TextView header  = (TextView) view.findViewById(R.id.detail_item_header);
-		final TextView pali    = (TextView) view.findViewById(R.id.detail_item_pali);
-		final TextView english = (TextView) view.findViewById(R.id.detail_item_english);
-
-		setTitle(data.getTitle());
-
-		Glide.with(this).load(data.getImageUrl()).into(image);
-
-		final int iconResource = data.isFavorite()
-				? R.drawable.ic_star_black_36dp
-				: R.drawable.ic_star_border_black_36dp;
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			icon.setImageDrawable(getDrawable(iconResource));
-		} else {
-			icon.setImageBitmap(
-					BitmapFactory.decodeResource(getResources(), iconResource)
-			);
-		}
-
-		header.setText(data.getTitle());
-		pali.setText(Html.fromHtml(data.getPali()));
-		english.setText(Html.fromHtml(data.getEnglish()));
-	}
+//	public void bindDataToView(final View view, final MvpModel data) {
+//		if (data == null) {
+//			return;
+//		}
+//
+//		final ImageView image  = (ImageView) view.findViewById(R.id.detail_item_image);
+//		final ImageView icon   = (ImageView) view.findViewById(R.id.detail_item_favorite_icon);
+//		final TextView header  = (TextView) view.findViewById(R.id.detail_item_header);
+//		final TextView pali    = (TextView) view.findViewById(R.id.detail_item_pali);
+//		final TextView english = (TextView) view.findViewById(R.id.detail_item_english);
+//
+//		setTitle(data.getTitle());
+//
+//		Glide.with(this).load(data.getImageUrl()).into(image);
+//
+//		final int iconResource = data.isFavorite()
+//				? R.drawable.ic_star_black_36dp
+//				: R.drawable.ic_star_border_black_36dp;
+//
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//			icon.setImageDrawable(getDrawable(iconResource));
+//		} else {
+//			icon.setImageBitmap(
+//					BitmapFactory.decodeResource(getResources(), iconResource)
+//			);
+//		}
+//
+//		header.setText(data.getTitle());
+//		pali.setText(Html.fromHtml(data.getPali()));
+//		english.setText(Html.fromHtml(data.getEnglish()));
+//	}
 
 	public void onShareItClicked(View view) {
 		closeFloatingActionMenu(view);

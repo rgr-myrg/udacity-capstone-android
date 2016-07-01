@@ -9,10 +9,15 @@
 		Shared from my Pocket Buddha App. #pocketbuddha
 	</string>
 
-	<!--Menu Item Labels-->
 	<string name="action_home">Home</string>
 	<string name="action_favorites">Favorites</string>
 	<string name="action_search">Search</string>
+	<string name="action_delete">Delete</string>
+
+	<string name="fab_label_share">Share It!</string>
+	<string name="fab_label_play">Play It!</string>
+    <string name="fab_label_title">Organize by Title</string>
+    <string name="fab_label_date">Organize by Date</string>
 
 	<string name="navigation_drawer_open">Open navigation drawer</string>
 	<string name="navigation_drawer_close">Close navigation drawer</string>
@@ -27,23 +32,28 @@
 	<string name="msg_db_error">Oops! Something went awry!</string>
 	<string name="msg_play_error">Unable to play file at this time.</string>
 
+    <string name="content_home_description">Welcome to Pocket Buddha</string>
 	<string name="content_image_description">Captivating Buddhist Image</string>
+	<string name="content_circle_description">Icon for the selected content</string>
+	<string name="content_action_delete">Icon for performing a delete action on this content</string>
+	<string name="content_action_favorite">Icon for adding this item to favorites list</string>
+
 
 	<string name="search_authority">net.usrlib.pocketbuddha.provider.search</string>
 	<string name="search_intent_data">
 		content://net.usrlib.pocketbuddha.provider.search
 	</string>
-    <string name="search_hint">Search hint</string>
+	<string name="search_hint">Search hint</string>
 
-    <string name="splash_screen_welcome_msg">One peaceful moment.</string>
+	<string name="splash_screen_welcome_msg">One peaceful moment.</string>
 	<string name="splash_screen_startup_msg">Updating...</string>
-    <string name="splash_screen_progress_msg">Smile more...</string>
+	<string name="splash_screen_progress_msg">Smile more...</string>
 	<string name="splash_screen_finished_msg">Finishing...</string>
 	<string name="splash_screen_error_msg">
 		Unable to complete set up! Please check your network connection.
 	</string>
 
-    <string name="widget_title">Daily Pali Word</string>
-    <string name="widget_empty_msg">Unable to sync data. Trying again tonight.</string>
+	<string name="widget_title">Daily Pali Word</string>
+	<string name="widget_empty_msg">Unable to sync data. Trying again tonight.</string>
 	<string name="ad_banner_unit_id">ca-app-pub-7237046001480876/6588891069</string>
 </resources>

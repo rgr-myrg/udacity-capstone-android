@@ -23,6 +23,8 @@ import net.usrlib.pocketbuddha.R;
 public class BaseActivity extends AppCompatActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
 
+	private boolean mIsTablet = false;
+
 	protected void initContentView(final int resource) {
 		setContentView(resource);
 
@@ -31,6 +33,8 @@ public class BaseActivity extends AppCompatActivity
 
 		initDrawerLayout(toolbar);
 		initNavigationView();
+
+		mIsTablet = findViewById(R.id.tablet_detail_container) != null;
 	}
 
 	protected void initDrawerLayout(Toolbar toolbar) {
@@ -117,5 +121,9 @@ public class BaseActivity extends AppCompatActivity
 		drawer.closeDrawer(GravityCompat.START);
 
 		return true;
+	}
+
+	public boolean isTablet() {
+		return mIsTablet;
 	}
 }

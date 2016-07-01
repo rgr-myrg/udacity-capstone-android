@@ -4,6 +4,7 @@
 	android:layout_height="match_parent"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:fab="http://schemas.android.com/apk/res-auto">
+
 	<com.github.clans.fab.FloatingActionMenu
 		android:id="@+id/fab_menu_starred_drawer"
 		android:layout_width="match_parent"
@@ -22,7 +23,7 @@
 			android:src="@drawable/ic_sort_by_alpha_white_24dp"
 			android:onClick="onSortByTitleClicked"
 			fab:fab_size="mini"
-			fab:fab_label="Organize by Title"/>
+			fab:fab_label="@string/fab_label_title"/>
 
 		<com.github.clans.fab.FloatingActionButton
 			android:id="@+id/fab_sort_by_date"
@@ -31,6 +32,6 @@
 			android:src="@drawable/ic_date_range_white_24dp"
 			android:onClick="onSortByDateClicked"
 			fab:fab_size="mini"
-			fab:fab_label="Organize by Date"/>
+			fab:fab_label="@string/fab_label_date"/>
 	</com.github.clans.fab.FloatingActionMenu>
 </LinearLayout>

@@ -10,8 +10,8 @@
 		android:id="@+id/favorites_list_recycler_view"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingTop="4dp"
-		android:paddingRight="2dp"
-		android:paddingLeft="2dp"/>
+		android:paddingTop="@dimen/recycler_view_padding_default"
+		android:paddingRight="@dimen/recycler_view_padding_sides"
+		android:paddingLeft="@dimen/recycler_view_padding_sides"/>
 
 </LinearLayout>

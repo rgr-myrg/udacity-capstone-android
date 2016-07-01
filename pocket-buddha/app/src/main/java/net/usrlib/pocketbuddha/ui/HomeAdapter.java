@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,13 +26,15 @@ import net.usrlib.pocketbuddha.util.BitmapUtil;
  */
 public class HomeAdapter extends RecyclerView.Adapter {
 	private LayoutInflater mInflater = null;
+	private BaseFragment mFragment = null;
 	private Context mContext = null;
 	private Cursor mCursor = null;
 
-	public HomeAdapter(final Context mContext, final Cursor cursor) {
+	public HomeAdapter(final BaseFragment fragment, final Context mContext, final Cursor cursor) {
 		this.mInflater = LayoutInflater.from(mContext);
-		this.mContext = mContext;
-		this.mCursor = cursor;
+		this.mFragment = fragment;
+		this.mContext  = mContext;
+		this.mCursor   = cursor;
 	}
 
 	@Override
@@ -129,12 +132,26 @@ public class HomeAdapter extends RecyclerView.Adapter {
 	}
 
 	private void startDetailActivity(int position) {
-		final Intent intent = new Intent(mContext, DetailActivity.class);
+		if (!mFragment.isTablet()) {
+			final Intent intent = new Intent(mContext, DetailActivity.class);
 
-		intent.putExtra(MvpModel.POSITION_KEY, position);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.putExtra(MvpModel.POSITION_KEY, position);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-		mContext.startActivity(intent);
+			mContext.startActivity(intent);
+		} else {
+			final Bundle bundle = new Bundle();
+			bundle.putParcelable(MvpModel.NAME, getItem(position));
+
+			final DetailFragment fragment = new DetailFragment();
+			fragment.setArguments(bundle);
+
+			mFragment.getFragmentActivity()
+					.getSupportFragmentManager()
+					.beginTransaction()
+					.replace(R.id.tablet_detail_container, fragment, DetailFragment.NAME)
+					.commit();
+		}
 	}
 
 	private void onBitmapLoaded(final Bitmap bitmap, final TextView textView) {

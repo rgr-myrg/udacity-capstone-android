@@ -10,7 +10,7 @@
 		android:id="@+id/search_results_recycler_view"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingRight="4dp"
-		android:paddingLeft="4dp"/>
+		android:paddingRight="@dimen/recycler_view_padding_default"
+		android:paddingLeft="@dimen/recycler_view_padding_default"/>
 
 </LinearLayout>

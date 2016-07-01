@@ -1,12 +1,20 @@
 package net.usrlib.pocketbuddha.ui;
 
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import net.usrlib.pocketbuddha.R;
 import net.usrlib.pocketbuddha.mvp.MvpModel;
@@ -25,6 +33,8 @@ public class DetailFragment extends Fragment {
 		final DetailFragment fragment = new DetailFragment();
 		fragment.mData = data;
 
+		Log.d("FRAGMENT", fragment.mData.getTitle() + " isFavorite: " + fragment.mData.isFavorite());
+
 		return fragment;
 	}
 
@@ -32,10 +42,13 @@ public class DetailFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+		setRetainInstance(true);
 
-		if (savedInstanceState != null) {
-			mData = savedInstanceState.getParcelable(NAME);
-		}
+//		if (savedInstanceState != null) {
+//			Log.d("FRAGMENT", "restored");
+//			mData = savedInstanceState.getParcelable(NAME);
+//			Log.d("FRAGMENT",mData.getTitle() + " isFavorite: " + mData.isFavorite());
+//		}
 	}
 
 	@Nullable
@@ -43,26 +56,68 @@ public class DetailFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mRootView = inflater.inflate(R.layout.home_detail_view, container, false);
 
-		Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
-		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				getParentActivity().onBackPressed();
-			}
-		});
+		final Bundle bundle = getArguments();
 
-		getParentActivity().bindDataToView(mRootView, mData);
+		if (bundle != null) {
+			final MvpModel mvpModel = (MvpModel) bundle.getParcelable(MvpModel.NAME);
+			if (mvpModel != null) {
+				mData = mvpModel;
+			}
+		} else {
+			Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
+			toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					getBaseActivity().onBackPressed();
+				}
+			});
+		}
+
+		bindDataToView(mRootView, mData);
 
 		return mRootView;
 	}
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putParcelable(NAME, mData);
+//	@Override
+//	public void onSaveInstanceState(Bundle outState) {
+//		super.onSaveInstanceState(outState);
+//		outState.putParcelable(NAME, mData);
+//	}
+
+	public void bindDataToView(final View view, final MvpModel data) {
+		if (data == null) {
+			return;
+		}
+
+		final ImageView image  = (ImageView) view.findViewById(R.id.detail_item_image);
+		final ImageView icon   = (ImageView) view.findViewById(R.id.detail_item_favorite_icon);
+		final TextView header  = (TextView) view.findViewById(R.id.detail_item_header);
+		final TextView pali    = (TextView) view.findViewById(R.id.detail_item_pali);
+		final TextView english = (TextView) view.findViewById(R.id.detail_item_english);
+
+		final BaseActivity parent = getBaseActivity();
+		parent.setTitle(data.getTitle());
+
+		Glide.with(this).load(data.getImageUrl()).into(image);
+
+		final int iconResource = data.isFavorite()
+				? R.drawable.ic_star_black_36dp
+				: R.drawable.ic_star_border_black_36dp;
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			icon.setImageDrawable(parent.getDrawable(iconResource));
+		} else {
+			icon.setImageBitmap(
+					BitmapFactory.decodeResource(getResources(), iconResource)
+			);
+		}
+
+		header.setText(data.getTitle());
+		pali.setText(Html.fromHtml(data.getPali()));
+		english.setText(Html.fromHtml(data.getEnglish()));
 	}
 
-	private DetailActivity getParentActivity() {
-		return (DetailActivity) getActivity();
+	private BaseActivity getBaseActivity() {
+		return (BaseActivity) getActivity();
 	}
 }

@@ -9,8 +9,8 @@
 		android:id="@+id/daily_widget_image"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:padding="8dp"
 		android:layout_gravity="top"
+		android:padding="@dimen/default_content_padding"
 		android:src="@mipmap/ic_launcher"/>
 
 	<LinearLayout
@@ -19,39 +19,38 @@
 		android:layout_height="match_parent"
 		android:layout_toRightOf="@id/daily_widget_image"
 		android:layout_weight="1"
-		android:background="#FFFFFF"
+		android:background="@color/white"
 		android:orientation="vertical">
 
 		<TextView
+			style="@style/Base.TextAppearance.AppCompat.Medium.Inverse"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="top"
-			android:gravity="center"
-			android:padding="3dp"
-			android:text="@string/widget_title"
-			android:textStyle="bold"
 			android:background="@color/pariyatti"
-			style="@style/Base.TextAppearance.AppCompat.Medium.Inverse"/>
+			android:gravity="center"
+			android:padding="@dimen/widget_padding"
+			android:text="@string/widget_title"
+			android:textStyle="bold"/>
 
-			<TextView
-				android:id="@+id/daily_widget_term"
-				style="@style/Base.TextAppearance.AppCompat.Medium"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="top"
-				android:padding="3dp"
-				android:text="word"
-				android:textColor="@color/dark"
-				android:textStyle="bold|italic"/>
-			<TextView
-				android:id="@+id/daily_widget_definition"
-				style="@style/Base.TextAppearance.AppCompat.Small"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="top"
-				android:padding="3dp"
-				android:text="description"
-				android:textColor="@color/dark"/>
+		<TextView
+			android:id="@+id/daily_widget_term"
+			style="@style/Base.TextAppearance.AppCompat.Medium"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="top"
+			android:padding="@dimen/widget_padding"
+			android:textColor="@color/dark"
+			android:textStyle="bold|italic"/>
+
+		<TextView
+			android:id="@+id/daily_widget_definition"
+			style="@style/Base.TextAppearance.AppCompat.Small"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="top"
+			android:padding="@dimen/widget_padding"
+			android:textColor="@color/dark"/>
 
 	</LinearLayout>
 </RelativeLayout>

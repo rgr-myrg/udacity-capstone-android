@@ -10,7 +10,8 @@
 	<ImageView
 		android:id="@+id/splash_screen_imageview"
 		android:layout_width="@dimen/splash_screen_image_size"
-		android:layout_height="@dimen/splash_screen_image_size"/>
+		android:layout_height="@dimen/splash_screen_image_size"
+		android:contentDescription="@string/content_home_description"/>
 
 	<TextView
 		android:layout_width="match_parent"

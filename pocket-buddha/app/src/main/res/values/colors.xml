@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#0091EA</color>
-    <color name="colorPrimaryDark">#007EE6</color>
-    <color name="colorAccent">#FF5733</color>
-    <color name="gray">#CCC</color>
-    <color name="dark">#263238</color>
-    <color name="pariyatti">#F57F17</color>
-    <color name="yellow">#FFC300</color>
+	<color name="colorPrimary">#0091EA</color>
+	<color name="colorPrimaryDark">#007EE6</color>
+	<color name="colorAccent">#FF5733</color>
+	<color name="gray">#CCC</color>
+	<color name="dark">#263238</color>
+	<color name="pariyatti">#F57F17</color>
+	<color name="yellow">#FFC300</color>
+	<color name="white">#FFFFFF</color>
 </resources>

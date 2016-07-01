@@ -30,7 +30,6 @@
 
 			<android.support.v7.widget.Toolbar
 				android:id="@+id/toolbar"
-				style="@style/ToolBarWithNavigationBack"
 				android:layout_width="match_parent"
 				android:layout_height="?attr/actionBarSize"
 				android:background="@null"

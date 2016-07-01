@@ -2,9 +2,7 @@ package net.usrlib.pocketbuddha.ui;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.Fragment;
 
 import net.usrlib.pocketbuddha.R;
 import net.usrlib.pocketbuddha.mvp.MvpPresenter;
@@ -14,9 +12,6 @@ import net.usrlib.pocketbuddha.mvp.MvpView;
  * Created by rgr-myrg on 6/7/16.
  */
 public class HomeActivity extends BaseActivity implements MvpView {
-	private RecyclerView mRecyclerView = null;
-	private HomeAdapter mRecyclerAdapter = null;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,19 +20,14 @@ public class HomeActivity extends BaseActivity implements MvpView {
 		MvpPresenter.getInstance().requestItemsFromDb(this);
 	}
 
-	protected void initRecyclerViewAndAdapter(final Cursor cursor) {
-		mRecyclerAdapter = new HomeAdapter(this, cursor);
-		mRecyclerView = (RecyclerView) findViewById(R.id.home_recycler_view_list);
-
-		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-		mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-		mRecyclerView.setHasFixedSize(true);
-		mRecyclerView.setAdapter(mRecyclerAdapter);
-	}
-
 	@Override
 	public void onTransactionCursorReady(Cursor cursor) {
-		initRecyclerViewAndAdapter(cursor);
+		Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.home_fragment);
+
+		// Notify the fragment the cursor is ready.
+		if (fragment != null) {
+			((BaseFragment) fragment).onCursorReady(cursor);
+		}
 	}
 
 	@Override

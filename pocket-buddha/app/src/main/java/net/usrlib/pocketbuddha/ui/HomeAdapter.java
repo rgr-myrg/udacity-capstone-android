@@ -25,6 +25,8 @@ import net.usrlib.pocketbuddha.util.BitmapUtil;
  * Created by rgr-myrg on 6/7/16.
  */
 public class HomeAdapter extends RecyclerView.Adapter {
+	public static final String NAME = HomeAdapter.class.getSimpleName();
+
 	private LayoutInflater mInflater = null;
 	private BaseFragment mFragment = null;
 	private Context mContext = null;
@@ -142,10 +144,12 @@ public class HomeAdapter extends RecyclerView.Adapter {
 		} else {
 			final Bundle bundle = new Bundle();
 			bundle.putParcelable(MvpModel.NAME, getItem(position));
+			bundle.putBoolean(NAME, true);
 
 			final DetailFragment fragment = new DetailFragment();
 			fragment.setArguments(bundle);
 
+			mFragment.setAdapterPosition(position);
 			mFragment.getFragmentActivity()
 					.getSupportFragmentManager()
 					.beginTransaction()

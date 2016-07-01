@@ -36,6 +36,7 @@
 	<dimen name="minimal_layout_size">0dp</dimen>
 	<dimen name="swipe_reveal_layout_width">60dp</dimen>
 
+    <dimen name="recycler_view_margin_top">4dp</dimen>
 	<dimen name="recycler_view_padding_default">4dp</dimen>
 	<dimen name="recycler_view_padding_sides">2dp</dimen>
 

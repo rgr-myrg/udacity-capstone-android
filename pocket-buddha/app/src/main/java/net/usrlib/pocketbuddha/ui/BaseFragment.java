@@ -10,4 +10,5 @@ public interface BaseFragment {
 	public FragmentActivity getFragmentActivity();
 	public void onCursorReady(Cursor cursor);
 	public boolean isTablet();
+	public void setAdapterPosition(int position);
 }

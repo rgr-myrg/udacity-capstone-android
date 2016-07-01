@@ -4,6 +4,10 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -12,10 +16,22 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import net.usrlib.pocketbuddha.R;
+import net.usrlib.pocketbuddha.mvp.MvpModel;
+import net.usrlib.pocketbuddha.mvp.MvpPresenter;
+import net.usrlib.pocketbuddha.player.SoundPlayer;
+import net.usrlib.pocketbuddha.util.IntentUtil;
+import net.usrlib.pocketbuddha.util.SnackbarUtil;
 
 /**
  * Created by rgr-myrg on 6/11/16.
@@ -24,6 +40,11 @@ public class BaseActivity extends AppCompatActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
 
 	private boolean mIsTablet = false;
+	protected View mRootView  = null;
+	protected MvpModel mData  = null;
+	protected Cursor mCursor  = null;
+	protected int mAdapterPosition = 0;
+	protected SoundPlayer mSoundPlayer = new SoundPlayer();
 
 	protected void initContentView(final int resource) {
 		setContentView(resource);
@@ -34,6 +55,7 @@ public class BaseActivity extends AppCompatActivity
 		initDrawerLayout(toolbar);
 		initNavigationView();
 
+		mRootView = findViewById(android.R.id.content);
 		mIsTablet = findViewById(R.id.tablet_detail_container) != null;
 	}
 
@@ -123,7 +145,184 @@ public class BaseActivity extends AppCompatActivity
 		return true;
 	}
 
+	public MvpModel getItem(final int position) {
+		if (mCursor == null) {
+			return null;
+		}
+		Log.d("BaseActivity", "getItem position: " + position);
+
+		mCursor.moveToPosition(position);
+		mAdapterPosition = position;
+
+		return MvpModel.fromDbCursor(mCursor);
+	}
+
 	public boolean isTablet() {
 		return mIsTablet;
+	}
+
+	public void setAdapterPosition(int position) {
+		Log.d("BaseActivity", "setAdapterPosition position: " + position);
+		mAdapterPosition = position;
+	}
+
+	public String formatValueForIntent(final String value) {
+		return Html.fromHtml(value + "<br/>" + "<br/>").toString();
+	}
+
+	public void onShareItClicked(View view) {
+		closeFloatingActionMenu(view);
+
+		mData = getItem(mAdapterPosition);
+
+		final String body = mData.getPali() + "\n\n" + mData.getEnglish();
+
+		IntentUtil.startWithChooser(
+				this,
+				formatValueForIntent(mData.getTitle()),
+				formatValueForIntent(body)
+		);
+	}
+
+	public void closeFloatingActionMenu(View view) {
+		if (view == null) {
+			return;
+		}
+
+		final FloatingActionMenu menu = (FloatingActionMenu) view.getParent();
+
+		if (menu == null) {
+			return;
+		}
+
+		menu.close(true);
+	}
+
+	public void toggleFavoriteIcon(final View view, final MvpModel data) {
+		final ImageView icon = (ImageView) view;
+		final int iconResource = data.isFavorite()
+				? R.drawable.ic_star_black_36dp
+				: R.drawable.ic_star_border_black_36dp;
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			icon.setImageDrawable(getDrawable(iconResource));
+		} else {
+			icon.setImageBitmap(
+					BitmapFactory.decodeResource(getResources(), iconResource)
+			);
+		}
+	}
+
+	public void onFavoriteItClicked(View view) {
+		mData = getItem(mAdapterPosition);
+
+		mData.setFavorite(!mData.isFavorite());
+
+		toggleFavoriteIcon(view, mData);
+
+		MvpPresenter.getInstance().requestItemUpdate(this, mData);
+	}
+
+	public void displayMessage(final int msgId) {
+		if (mRootView == null) {
+			return;
+		}
+
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				SnackbarUtil.showMessage(
+						mRootView,
+						getString(msgId)
+				);
+			}
+		});
+	}
+
+	public void onPlayItClicked(final View view) {
+		mData = getItem(mAdapterPosition);
+
+		final FloatingActionButton button = (FloatingActionButton) view;
+
+		if (button == null) {
+			return;
+		}
+
+		new AsyncTask<Void, Void, Void>() {
+			private boolean hasLoaded = false;
+			@Override
+			protected Void doInBackground(Void... params) {
+				mSoundPlayer.loadMp3StreamWithUrl(
+						mData.getMp3Link(),
+						new SoundPlayer.OnPrepared() {
+							@Override
+							public void onReady() {
+								onSoundPlayerReady();
+							}
+							@Override
+							public void onComplete() {
+							}
+							@Override
+							public void onError() {
+								onMp3StreamError(view, button);
+							}
+						}
+				);
+
+				while (!hasLoaded) {
+					try {
+						Thread.sleep(1000);
+						publishProgress();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
+				return null;
+			}
+
+			@Override
+			protected void onProgressUpdate(Void... values) {
+				super.onProgressUpdate(values);
+				button.setProgress(100, true);
+			}
+
+			@Override
+			protected void onPostExecute(Void aVoid) {
+				super.onPostExecute(aVoid);
+				mSoundPlayer.play();
+				onMp3StreamReady(view, button);
+			}
+
+			private void onSoundPlayerReady() {
+				hasLoaded = true;
+			}
+		}.execute();
+
+		button.setProgress(100, true);
+	}
+
+	public void onMp3StreamReady(final View view, final FloatingActionButton button) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				button.hideProgress();
+				closeFloatingActionMenu(view);
+			}
+		});
+	}
+
+	public void onMp3StreamError(final View view, final FloatingActionButton button) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				button.hideProgress();
+				closeFloatingActionMenu(view);
+				SnackbarUtil.showMessage(
+						mRootView,
+						getString(R.string.msg_play_error)
+				);
+			}
+		});
 	}
 }

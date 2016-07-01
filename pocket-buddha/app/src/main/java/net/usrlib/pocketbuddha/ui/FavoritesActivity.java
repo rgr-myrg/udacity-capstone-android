@@ -9,8 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
-import com.github.clans.fab.FloatingActionMenu;
-
 import net.usrlib.pocketbuddha.R;
 import net.usrlib.pocketbuddha.mvp.MvpModel;
 import net.usrlib.pocketbuddha.mvp.MvpPresenter;
@@ -100,20 +98,6 @@ public class FavoritesActivity extends BaseActivity implements MvpView {
 		} else {
 			MvpPresenter.getInstance().requestFavoritesSortByDateAsc(this);
 		}
-	}
-
-	private void closeFloatingActionMenu(View view) {
-		if (view == null) {
-			return;
-		}
-
-		final FloatingActionMenu menu = (FloatingActionMenu) view.getParent();
-
-		if (menu == null) {
-			return;
-		}
-
-		menu.close(true);
 	}
 
 	private void initRecyclerViewAndAdapter(final Cursor cursor) {

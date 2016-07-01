@@ -49,6 +49,15 @@ public class HomeFragment extends Fragment implements BaseFragment {
 		return mIsTablet;
 	}
 
+	@Override
+	public void setAdapterPosition(int position) {
+		final BaseActivity baseActivity = (BaseActivity) getActivity();
+
+		if (baseActivity != null) {
+			baseActivity.setAdapterPosition(position);
+		}
+	}
+
 	private void initRecyclerViewAndAdapter(final Cursor cursor) {
 		mRecyclerAdapter = new HomeAdapter(this, getContext(), cursor);
 		mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.home_recycler_view_list);

@@ -56,15 +56,21 @@ public class DetailFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mRootView = inflater.inflate(R.layout.home_detail_view, container, false);
 
+		final Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
 		final Bundle bundle = getArguments();
 
 		if (bundle != null) {
+			// Don't need navigation icon for Tablet split layout.
+			// If HomeAdapter is true, we're in a split layout.
+			if (bundle.getBoolean(HomeAdapter.NAME, false)) {
+				toolbar.setNavigationIcon(null);
+			}
+
 			final MvpModel mvpModel = (MvpModel) bundle.getParcelable(MvpModel.NAME);
 			if (mvpModel != null) {
 				mData = mvpModel;
 			}
 		} else {
-			Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
 			toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {

@@ -22,7 +22,8 @@ public class HomeActivity extends BaseActivity implements MvpView {
 
 	@Override
 	public void onTransactionCursorReady(Cursor cursor) {
-		Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.home_fragment);
+		final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.home_fragment);
+		mCursor = cursor;
 
 		// Notify the fragment the cursor is ready.
 		if (fragment != null) {
@@ -40,9 +41,26 @@ public class HomeActivity extends BaseActivity implements MvpView {
 
 	@Override
 	public void onTransactionSuccess(MvpPresenter.TransactionType type, Bundle data) {
+		// Special case for table master layout only.
+		// Otherwise, this is handled in DetailActivity
+		if (!isTablet()) {
+			return;
+		}
+
+		if (type == MvpPresenter.TransactionType.DB_UPDATE) {
+			final int msgId = mData.isFavorite()
+					? R.string.msg_favorite_success
+					: R.string.msg_favorite_removed;
+
+			displayMessage(msgId);
+
+			// Refresh Home Cursor
+			MvpPresenter.getInstance().requestItemsFromDb(this);
+		}
 	}
 
 	@Override
 	public void onTransactionError(MvpPresenter.TransactionType type) {
+		displayMessage(R.string.msg_db_error);
 	}
 }

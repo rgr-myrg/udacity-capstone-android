@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "934334899316",
+    "project_id": "pocket-buddha"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:934334899316:android:79fb5754416d6d29",
+        "android_client_info": {
+          "package_name": "net.usrlib.pocketbuddha"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtR4VHLnUi7uQD2gAsNNtgjlS5pL49TIQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-80227355-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 def FEED_PAGER_END_POINT = FEED_PAGER_END_POINT
 def PALI_TERMS_END_POINT = PALI_TERMS_END_POINT
+def GOOGLE_ANALYTICS_KEY = GOOGLE_ANALYTICS_KEY
 def POCKET_BUDDHA_API_KEY = POCKET_BUDDHA_API_KEY
 
 android {
@@ -16,7 +17,8 @@ android {
 		versionName "1.0"
 		buildConfigField "String", "FEED_PAGER_END_POINT", FEED_PAGER_END_POINT
 		buildConfigField "String", "PALI_TERMS_END_POINT", PALI_TERMS_END_POINT
-		buildConfigField "String", "POCKET_BUDDHA_API_KEY", POCKET_BUDDHA_API_KEY
+        buildConfigField "String", "GOOGLE_ANALYTICS_KEY", GOOGLE_ANALYTICS_KEY
+        buildConfigField "String", "POCKET_BUDDHA_API_KEY", POCKET_BUDDHA_API_KEY
 	}
 
 	buildTypes {
@@ -39,5 +41,6 @@ dependencies {
 	compile 'com.github.bumptech.glide:glide:3.7.0'
 	compile 'com.github.clans:fab:1.6.3'
 	compile 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.2.0'
+	compile 'com.google.android.gms:play-services-analytics:9.2.0'
 	//compile 'com.google.firebase:firebase-ads:9.0.2'
 }

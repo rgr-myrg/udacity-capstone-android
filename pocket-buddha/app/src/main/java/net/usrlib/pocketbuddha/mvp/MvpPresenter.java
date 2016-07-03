@@ -13,7 +13,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import net.usrlib.pocketbuddha.AnalyticsApplication;
+import net.usrlib.pocketbuddha.util.TrackerUtil;
 import net.usrlib.pocketbuddha.BuildConfig;
 import net.usrlib.pocketbuddha.provider.FeedContract;
 import net.usrlib.pocketbuddha.provider.SearchContract;
@@ -268,7 +268,7 @@ public class MvpPresenter {
 
 		// Init Loader for Updates invariably
 //		if (uri.equals(FeedContract.ItemsEntry.CONTENT_ITEM_UPDATE_URI)) {
-//			Log.d(NAME, "CONTENT_ITEM_UPDATE_URI initLoader");
+//			Log.d(ACTION, "CONTENT_ITEM_UPDATE_URI initLoader");
 //			loaderManager.initLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
 //		} else {
 			if (!mHasInitLoader) {
@@ -281,12 +281,12 @@ public class MvpPresenter {
 	}
 
 	public void requestTitleSearch(final AppCompatActivity app, final Uri uri) {
-		AnalyticsApplication.trackTitleSearch(app.getApplication(), uri.getLastPathSegment());
+		TrackerUtil.trackTitleSearch(app.getApplication(), uri.getLastPathSegment());
 		requestSearch(app, uri);
 	}
 
 	public void requestTextSearch(final AppCompatActivity app, final String query) {
-		AnalyticsApplication.trackSearchQuery(app.getApplication(), query);
+		TrackerUtil.trackSearchQuery(app.getApplication(), query);
 		requestSearch(
 				app,
 				SearchContract.SearchEntry.SEARCH_TEXT_CONTENT_URI

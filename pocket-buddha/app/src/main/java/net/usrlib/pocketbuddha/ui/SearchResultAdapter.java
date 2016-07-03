@@ -1,5 +1,6 @@
 package net.usrlib.pocketbuddha.ui;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -99,7 +100,9 @@ public class SearchResultAdapter extends RecyclerView.Adapter {
 				DetailActivity.class
 		);
 
+		intent.setAction(SearchResultActivity.ACTION);
 		intent.putExtra(ITEM_POSITION_KEY, position);
+		intent.putExtra(SearchManager.QUERY, mSearchQuery);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 		mContext.startActivity(intent);

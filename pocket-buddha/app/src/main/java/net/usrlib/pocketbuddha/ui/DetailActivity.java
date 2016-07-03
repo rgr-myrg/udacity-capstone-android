@@ -1,5 +1,6 @@
 package net.usrlib.pocketbuddha.ui;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,11 +13,14 @@ import net.usrlib.pocketbuddha.R;
 import net.usrlib.pocketbuddha.mvp.MvpModel;
 import net.usrlib.pocketbuddha.mvp.MvpPresenter;
 import net.usrlib.pocketbuddha.mvp.MvpView;
+import net.usrlib.pocketbuddha.util.TrackerUtil;
 
 /**
  * Created by rgr-myrg on 6/7/16.
  */
 public class DetailActivity extends BaseActivity implements MvpView {
+	public static final String NAME = DetailActivity.class.getSimpleName();
+
 	protected DetailAdapter mPagerAdapter = null;
 	protected ViewPager mViewPager = null;
 
@@ -48,27 +52,39 @@ public class DetailActivity extends BaseActivity implements MvpView {
 
 		if (action == null) {
 			MvpPresenter.getInstance().requestItemsFromDb(this);
+			TrackerUtil.trackScreen(getApplication(), NAME, HomeActivity.NAME);
 			return;
 		}
 
 		// Determine which cursor results to request based on Intent Action
 		if (action.equals(Intent.ACTION_SEARCH)) {
 			startSearchResultsActivity(intent);
+			TrackerUtil.trackScreen(getApplication(), NAME, Intent.ACTION_SEARCH);
 
 		} else if (action.equals(Intent.ACTION_VIEW)) {
 			requestTitleSearchResults(intent);
+			TrackerUtil.trackScreen(getApplication(), NAME, Intent.ACTION_VIEW);
+
+		} else if (action.equals(SearchResultActivity.ACTION)) {
+			requestTextSearchResult(intent);
+			TrackerUtil.trackScreen(getApplication(), NAME, SearchResultActivity.ACTION);
 
 		} else if (action.equals(FavoritesActivity.ACTION)) {
 			requestFavorites();
+			TrackerUtil.trackScreen(getApplication(), NAME, FavoritesActivity.ACTION);
 
 		} else {
 			MvpPresenter.getInstance().requestItemsFromDb(this);
+			TrackerUtil.trackScreen(getApplication(), NAME, HomeActivity.NAME);
 		}
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+		if (outState == null || mViewPager == null) {
+			return;
+		}
 		outState.putInt(MvpModel.POSITION_KEY, mViewPager.getCurrentItem());
 	}
 
@@ -150,6 +166,19 @@ public class DetailActivity extends BaseActivity implements MvpView {
 		final Uri uri = Uri.parse(intent.getDataString());
 
 		MvpPresenter.getInstance().requestTitleSearch(this, uri);
+	}
+
+	private void requestTextSearchResult(final Intent intent) {
+		final Bundle bundle = intent.getExtras();
+
+		if (bundle == null) {
+			onTransactionError(MvpPresenter.TransactionType.DB_QUERY);
+		}
+
+		final String query = bundle.getString(SearchManager.QUERY);
+		mAdapterPosition = bundle.getInt(SearchResultAdapter.ITEM_POSITION_KEY, 0);
+
+		MvpPresenter.getInstance().requestTextSearch(this, query);
 	}
 
 	private void requestFavorites() {

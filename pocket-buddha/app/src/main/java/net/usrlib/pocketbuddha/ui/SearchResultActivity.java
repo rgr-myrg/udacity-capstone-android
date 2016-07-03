@@ -17,6 +17,8 @@ import net.usrlib.pocketbuddha.mvp.MvpView;
  * Created by rgr-myrg on 6/2/16.
  */
 public class SearchResultActivity extends BaseActivity implements MvpView {
+	public static final String ACTION = SearchResultActivity.class.getSimpleName();
+
 	private RecyclerView mRecyclerView = null;
 	private SearchResultAdapter mRecyclerAdapter = null;
 

@@ -46,7 +46,7 @@ public class DetailFragment extends Fragment {
 
 //		if (savedInstanceState != null) {
 //			Log.d("FRAGMENT", "restored");
-//			mData = savedInstanceState.getParcelable(NAME);
+//			mData = savedInstanceState.getParcelable(ACTION);
 //			Log.d("FRAGMENT",mData.getTitle() + " isFavorite: " + mData.isFavorite());
 //		}
 	}
@@ -87,7 +87,7 @@ public class DetailFragment extends Fragment {
 //	@Override
 //	public void onSaveInstanceState(Bundle outState) {
 //		super.onSaveInstanceState(outState);
-//		outState.putParcelable(NAME, mData);
+//		outState.putParcelable(ACTION, mData);
 //	}
 
 	public void bindDataToView(final View view, final MvpModel data) {

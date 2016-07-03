@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
+import net.usrlib.pocketbuddha.util.TrackerUtil;
 import net.usrlib.pocketbuddha.R;
 import net.usrlib.pocketbuddha.mvp.MvpModel;
 import net.usrlib.pocketbuddha.mvp.MvpPresenter;
@@ -182,6 +183,8 @@ public class BaseActivity extends AppCompatActivity
 				formatValueForIntent(mData.getTitle()),
 				formatValueForIntent(body)
 		);
+
+		TrackerUtil.trackShareItClicked(getApplication(), mData.getTitle());
 	}
 
 	public void closeFloatingActionMenu(View view) {
@@ -221,6 +224,10 @@ public class BaseActivity extends AppCompatActivity
 		toggleFavoriteIcon(view, mData);
 
 		MvpPresenter.getInstance().requestItemUpdate(this, mData);
+
+		if(mData.isFavorite()) {
+			TrackerUtil.trackFavoriteItClicked(getApplication(), mData.getTitle());
+		}
 	}
 
 	public void displayMessage(final int msgId) {
@@ -300,6 +307,8 @@ public class BaseActivity extends AppCompatActivity
 		}.execute();
 
 		button.setProgress(100, true);
+
+		TrackerUtil.trackPlayItClicked(getApplication(), mData.getTitle());
 	}
 
 	public void onMp3StreamReady(final View view, final FloatingActionButton button) {

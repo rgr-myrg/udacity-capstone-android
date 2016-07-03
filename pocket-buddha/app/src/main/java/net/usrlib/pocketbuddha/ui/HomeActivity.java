@@ -12,6 +12,8 @@ import net.usrlib.pocketbuddha.mvp.MvpView;
  * Created by rgr-myrg on 6/7/16.
  */
 public class HomeActivity extends BaseActivity implements MvpView {
+	public static final String NAME = HomeActivity.class.getSimpleName();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

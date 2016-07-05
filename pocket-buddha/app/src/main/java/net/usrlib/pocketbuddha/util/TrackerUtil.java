@@ -6,8 +6,6 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import java.util.Map;
-
 /**
  * Created by rgr-myrg on 7/1/16.
  */
@@ -18,14 +16,17 @@ public class TrackerUtil extends Application {
 	public static final String SHARE_ACTION_KEY  = "ShareIt";
 	public static final String LIKED_ACTION_KEY  = "LikedIt";
 	public static final String PLAYED_ACTION_KEY = "PlayedIt";
-	private Tracker mTracker;
+	public static final String GA_TRACKER_NAME   = "PocketBuddhaTracker";
+
+	private static Tracker sTracker;
 
 	synchronized public Tracker getDefaultTracker() {
-		if (mTracker == null) {
+		if (sTracker == null) {
 			GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-			mTracker = analytics.newTracker("GlobalTracker");
+			sTracker = analytics.newTracker(GA_TRACKER_NAME);
 		}
-		return mTracker;
+
+		return sTracker;
 	}
 
 	public static final synchronized void trackSearchQuery(final Application app, final String query) {
@@ -64,8 +65,8 @@ public class TrackerUtil extends Application {
 	}
 
 	public static final synchronized void trackScreen(final Application app,
-	                                                  final String name,
-	                                                  final String referrer) {
+													  final String name,
+													  final String referrer) {
 		final TrackerUtil application = (TrackerUtil) app;
 		final Tracker tracker = application.getDefaultTracker();
 

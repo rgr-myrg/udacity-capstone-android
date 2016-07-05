@@ -66,7 +66,7 @@ public class DetailActivity extends BaseActivity implements MvpView {
 			TrackerUtil.trackScreen(getApplication(), NAME, Intent.ACTION_VIEW);
 
 		} else if (action.equals(SearchResultActivity.ACTION)) {
-			requestTextSearchResult(intent);
+			requestTextSearchResults(intent);
 			TrackerUtil.trackScreen(getApplication(), NAME, SearchResultActivity.ACTION);
 
 		} else if (action.equals(FavoritesActivity.ACTION)) {
@@ -168,7 +168,7 @@ public class DetailActivity extends BaseActivity implements MvpView {
 		MvpPresenter.getInstance().requestTitleSearch(this, uri);
 	}
 
-	private void requestTextSearchResult(final Intent intent) {
+	private void requestTextSearchResults(final Intent intent) {
 		final Bundle bundle = intent.getExtras();
 
 		if (bundle == null) {

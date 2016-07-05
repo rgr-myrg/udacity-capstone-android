@@ -4,6 +4,7 @@
 	<string name="activity_detail"></string>
 	<string name="activity_search_results">Search Results</string>
 	<string name="activity_about">About</string>
+    <string name="activity_credits">Credits</string>
 
 	<string name="share_footer_text">
 		Shared from my Pocket Buddha App. #pocketbuddha
@@ -22,10 +23,10 @@
 	<string name="navigation_drawer_open">Open navigation drawer</string>
 	<string name="navigation_drawer_close">Close navigation drawer</string>
 
-	<string name="home_drawer_contribute_group">Contribute</string>
+	<string name="home_drawer_home">Home</string>
+    <string name="home_drawer_favorites">Favorites</string>
 	<string name="home_drawer_about">About</string>
-	<string name="home_drawer_contribute_view_ad">Watch a Video Ad</string>
-	<string name="home_drawer_contribute_invitation">Send an Invite</string>
+	<string name="home_drawer_credits">Credits</string>
 
 	<string name="msg_favorite_success">Added to Favorites!</string>
 	<string name="msg_favorite_removed">Removed from Favorites.</string>

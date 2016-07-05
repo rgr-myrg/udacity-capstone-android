@@ -21,10 +21,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import net.usrlib.pocketbuddha.util.TrackerUtil;
 import net.usrlib.pocketbuddha.R;
@@ -135,8 +139,17 @@ public class BaseActivity extends AppCompatActivity
 		final int itemId = item.getItemId();
 
 		switch (itemId) {
+			case R.id.nav_home:
+				startActivity(new Intent(this, HomeActivity.class));
+				break;
+			case R.id.nav_favorites:
+				startActivity(new Intent(this, FavoritesActivity.class));
+				break;
 			case R.id.nav_about:
 				startActivity(new Intent(this, AboutActivity.class));
+				break;
+			case R.id.nav_credits:
+				startActivity(new Intent(this, CreditsActivity.class));
 				break;
 		}
 
@@ -333,5 +346,30 @@ public class BaseActivity extends AppCompatActivity
 				);
 			}
 		});
+	}
+
+	public void setAdView() {
+		final AdView adView = (AdView) findViewById(R.id.adView);
+
+		if (adView == null) {
+			return;
+		}
+
+		// Create an ad request. Check logcat output for the hashed device ID to
+		// get test ads on a physical device. e.g.
+		// "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
+		final AdRequest adRequest = new AdRequest.Builder()
+		//		.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+				.build();
+
+		adView.loadAd(adRequest);
+	}
+
+	public class BaseWebViewClient extends WebViewClient {
+		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			view.loadUrl(url);
+			return true;
+		}
 	}
 }

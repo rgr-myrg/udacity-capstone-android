@@ -225,8 +225,6 @@ public class MvpModel implements Parcelable {
 		private MvpView mMvpView = null;
 
 		public LoaderHelper(Context context, Uri queryUri, MvpView mvpView) {
-			Log.d("LoaderHelper", "Constructor");
-
 			this.mContext  = context;
 			this.mQueryUri = queryUri;
 			this.mMvpView  = mvpView;
@@ -234,8 +232,6 @@ public class MvpModel implements Parcelable {
 
 		@Override
 		public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-			Log.d("LoaderHelper", "onCreateLoader");
-
 			return new CursorLoader(
 					mContext,
 					mQueryUri,
@@ -256,9 +252,8 @@ public class MvpModel implements Parcelable {
 		@Override
 		public void onLoaderReset(Loader<Cursor> loader) {
 			Log.d("LoaderHelper", "onLoaderReset");
-
 			// Loader's data is now unavailable. Remove any references to the old cursor?
-			// mMvpView.onTransactionCursorReady(null);
+			//mMvpView.onTransactionCursorReady(null);
 		}
 	}
 

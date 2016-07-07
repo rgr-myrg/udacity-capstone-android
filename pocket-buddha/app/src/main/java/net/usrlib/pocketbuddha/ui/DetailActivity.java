@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.MenuItem;
 
 import net.usrlib.pocketbuddha.R;
 import net.usrlib.pocketbuddha.mvp.MvpModel;
@@ -20,72 +21,63 @@ import net.usrlib.pocketbuddha.util.TrackerUtil;
  */
 public class DetailActivity extends BaseActivity implements MvpView {
 	public static final String NAME = DetailActivity.class.getSimpleName();
+	public static final String LAST_INTENT_KEY = "lastIntent";
 
-	protected DetailAdapter mPagerAdapter = null;
-	protected ViewPager mViewPager = null;
+	private DetailAdapter mPagerAdapter = null;
+	private ViewPager mViewPager = null;
+	private Intent mLastIntent = null;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home_detail_activity);
 
-		final Intent intent = getIntent();
-
-		if (intent == null) {
-			return;
-		}
-
 		mRootView = findViewById(android.R.id.content);
 
-		mAdapterPosition = savedInstanceState == null
-				? intent.getIntExtra(MvpModel.POSITION_KEY, 0)
-				: savedInstanceState.getInt(MvpModel.POSITION_KEY);
-
 		if (savedInstanceState == null) {
-			Log.d("DETAIL", "is null");
+			mLastIntent = getIntent();
+			mAdapterPosition = mLastIntent.getIntExtra(MvpModel.POSITION_KEY, 0);
 		} else {
-			Log.d("DETAIL", "NOT null");
+			mLastIntent = savedInstanceState.getParcelable(LAST_INTENT_KEY);
+			mAdapterPosition = savedInstanceState.getInt(MvpModel.POSITION_KEY);
 		}
 
-		Log.d("DETAIL", "mAdapterPosition: " + mAdapterPosition);
-		final String action = intent.getAction();
+		requestResults(mLastIntent);
+	}
 
+	private void requestResults(final Intent intent) {
+		String action = intent.getAction();
 		if (action == null) {
-			MvpPresenter.getInstance().requestItemsFromDb(this);
-			TrackerUtil.trackScreen(getApplication(), NAME, HomeActivity.NAME);
-			return;
+			action = NAME;
 		}
 
-		// Determine which cursor results to request based on Intent Action
+		Log.d(NAME, "action: " + action);
+
 		if (action.equals(Intent.ACTION_SEARCH)) {
 			startSearchResultsActivity(intent);
-			TrackerUtil.trackScreen(getApplication(), NAME, Intent.ACTION_SEARCH);
-
 		} else if (action.equals(Intent.ACTION_VIEW)) {
 			requestTitleSearchResults(intent);
-			TrackerUtil.trackScreen(getApplication(), NAME, Intent.ACTION_VIEW);
-
 		} else if (action.equals(SearchResultActivity.ACTION)) {
 			requestTextSearchResults(intent);
-			TrackerUtil.trackScreen(getApplication(), NAME, SearchResultActivity.ACTION);
-
 		} else if (action.equals(FavoritesActivity.ACTION)) {
 			requestFavorites();
-			TrackerUtil.trackScreen(getApplication(), NAME, FavoritesActivity.ACTION);
-
 		} else {
 			MvpPresenter.getInstance().requestItemsFromDb(this);
-			TrackerUtil.trackScreen(getApplication(), NAME, HomeActivity.NAME);
 		}
+
+		TrackerUtil.trackScreen(getApplication(), NAME, action);
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+
 		if (outState == null || mViewPager == null) {
 			return;
 		}
+
 		outState.putInt(MvpModel.POSITION_KEY, mViewPager.getCurrentItem());
+		outState.putParcelable(LAST_INTENT_KEY, mLastIntent);
 	}
 
 	// Loader Helper Callbacks
@@ -110,13 +102,17 @@ public class DetailActivity extends BaseActivity implements MvpView {
 
 		displayMessage(msgId);
 
-		//TODO: Get last transaction ??? Figure out if view should be updated. Ex: Came from search result
-		// Refresh this view's data for DB_UPDATE transactions
-		Log.d("DETAIL", "invking requestItemsFromDb");
-		MvpPresenter.getInstance().requestItemsFromDb(this);
+		MvpPresenter.getInstance().OnRequestItemUpdateComplete.notifySuccess(mData);
 
-		// Data has changed. Restart the loader to do a new query?
-		// getLoaderManager().restartLoader(MvpModel.DB_QUERY_LOADER_ID, null, null);
+		if (mLastIntent != null) {
+			final String action = mLastIntent.getAction();
+			if (action != null && mLastIntent.getAction().equals(FavoritesActivity.ACTION)) {
+				return;
+			}
+		}
+
+		Log.d("DETAIL", "invoking requestResults");
+		requestResults(mLastIntent);
 	}
 
 	@Override
@@ -126,7 +122,6 @@ public class DetailActivity extends BaseActivity implements MvpView {
 
 	@Override
 	public void onTransactionCursorReady(Cursor cursor) {
-		Log.d("DETAIL", "onTransactionCursorReady");
 		mCursor = cursor;
 		mData = getItem(mAdapterPosition);
 
@@ -138,12 +133,9 @@ public class DetailActivity extends BaseActivity implements MvpView {
 	}
 
 	private void initViewPager(final int position, final Cursor cursor) {
-		Log.d("DETAIL", "initViewPager");
-
 		if (mPagerAdapter != null && mViewPager != null) {
-			Log.d("DETAIL", "initViewPager invoking changeCursor");
-			mPagerAdapter.changeCursor(cursor);
 			mViewPager.setCurrentItem(position);
+			mPagerAdapter.changeCursor(cursor);
 
 			return;
 		}

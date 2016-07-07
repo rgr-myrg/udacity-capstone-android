@@ -13,7 +13,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import net.usrlib.pocketbuddha.util.TrackerUtil;
+import net.usrlib.pattern.TinyEvent;
 import net.usrlib.pocketbuddha.BuildConfig;
 import net.usrlib.pocketbuddha.provider.FeedContract;
 import net.usrlib.pocketbuddha.provider.SearchContract;
@@ -21,6 +21,7 @@ import net.usrlib.pocketbuddha.provider.WordContract;
 import net.usrlib.pocketbuddha.service.FeedReceiver;
 import net.usrlib.pocketbuddha.service.FeedService;
 import net.usrlib.pocketbuddha.util.Preferences;
+import net.usrlib.pocketbuddha.util.TrackerUtil;
 
 import org.json.JSONException;
 
@@ -33,8 +34,10 @@ public class MvpPresenter {
 
 	private static MvpPresenter sInstance = null;
 	private FeedReceiver mFeedReceiver = null;
-	private boolean mHasInitLoader = false;
+	private boolean mHasDataUpdate = false;
 	private Uri mLastDbQueryUri = null;
+
+	public TinyEvent OnRequestItemUpdateComplete = new TinyEvent();
 
 	public static final MvpPresenter getInstance() {
 		if (sInstance == null) {
@@ -228,6 +231,8 @@ public class MvpPresenter {
 		);
 
 		if (rowCount > 0) {
+			mHasDataUpdate = true;
+
 			mvpView.onTransactionSuccess(
 					TransactionType.DB_UPDATE,
 					Bundle.EMPTY
@@ -264,20 +269,16 @@ public class MvpPresenter {
 				mvpView
 		);
 
-		Log.d(NAME, "mHasInitLoader: " + mHasInitLoader);
+		loaderManager.restartLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
 
-		// Init Loader for Updates invariably
-//		if (uri.equals(FeedContract.ItemsEntry.CONTENT_ITEM_UPDATE_URI)) {
-//			Log.d(ACTION, "CONTENT_ITEM_UPDATE_URI initLoader");
-//			loaderManager.initLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
+//		Log.i(NAME, "mHasDataUpdate: " + mHasDataUpdate);
+//
+//		if (mHasDataUpdate) {
+//			loaderManager.restartLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
+//			mHasDataUpdate = false;
 //		} else {
-			if (!mHasInitLoader) {
-				mHasInitLoader = true;
-				loaderManager.initLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
-			} else {
-				loaderManager.restartLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
-			}
-	//	}
+//			loaderManager.initLoader(MvpModel.DB_QUERY_LOADER_ID, null, loaderHelper);
+//		}
 	}
 
 	public void requestTitleSearch(final AppCompatActivity app, final Uri uri) {

@@ -16,8 +16,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import net.usrlib.pattern.TinyEvent;
 import net.usrlib.pocketbuddha.R;
 import net.usrlib.pocketbuddha.mvp.MvpModel;
+import net.usrlib.pocketbuddha.mvp.MvpPresenter;
 
 /**
  * Created by rgr-myrg on 6/8/16.
@@ -27,6 +29,18 @@ public class DetailFragment extends Fragment {
 	private MvpModel mData = null;
 	private View mRootView = null;
 
+	private TinyEvent.Listener mListener = new TinyEvent.Listener() {
+		@Override
+		public void onSuccess(Object data) {
+			final MvpModel mvpModel = (MvpModel) data;
+			if (mvpModel.getTitle().equals(mData.getTitle())) {
+				Log.d("FRAGMENT", "onSuccess " + mData.toString());
+
+				mData = mvpModel;
+			}
+		}
+	};
+
 	public DetailFragment() {}
 
 	public static DetailFragment newInstance(final MvpModel data) {
@@ -35,20 +49,22 @@ public class DetailFragment extends Fragment {
 
 		Log.d("FRAGMENT", fragment.mData.getTitle() + " isFavorite: " + fragment.mData.isFavorite());
 
+		MvpPresenter.getInstance().OnRequestItemUpdateComplete.addListener(fragment.mListener);
+
 		return fragment;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
 
-//		if (savedInstanceState != null) {
-//			Log.d("FRAGMENT", "restored");
-//			mData = savedInstanceState.getParcelable(ACTION);
-//			Log.d("FRAGMENT",mData.getTitle() + " isFavorite: " + mData.isFavorite());
-//		}
+		if (savedInstanceState != null) {
+			mData = savedInstanceState.getParcelable(MvpModel.NAME);
+			Log.d("FRAGMENT",mData.getTitle() + " isFavorite: " + mData.isFavorite());
+		}
 	}
 
 	@Nullable
@@ -67,6 +83,7 @@ public class DetailFragment extends Fragment {
 			}
 
 			final MvpModel mvpModel = (MvpModel) bundle.getParcelable(MvpModel.NAME);
+
 			if (mvpModel != null) {
 				mData = mvpModel;
 			}
@@ -84,11 +101,11 @@ public class DetailFragment extends Fragment {
 		return mRootView;
 	}
 
-//	@Override
-//	public void onSaveInstanceState(Bundle outState) {
-//		super.onSaveInstanceState(outState);
-//		outState.putParcelable(ACTION, mData);
-//	}
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(MvpModel.NAME, mData);
+	}
 
 	public void bindDataToView(final View view, final MvpModel data) {
 		if (data == null) {

@@ -112,6 +112,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter {
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 		mContext.startActivity(intent);
+		//((FavoritesActivity) mContext).finish();
 	}
 
 	private void requestUpdateTransaction(final int position) {

@@ -17,11 +17,20 @@ import net.usrlib.pocketbuddha.mvp.MvpView;
 public class FavoritesActivity extends BaseActivity implements MvpView {
 	public static final String ACTION = FavoritesActivity.class.getSimpleName();
 
+	public static final String SORT_BY_KEY = "sortBy";
+	public static final String TITLE_SORT_KEY = "titleSortDirection";
+	public static final String DATE_SORT_KEY  = "dateSortDirection";
+
+	public static final int SORT_BY_DATE  = 1;
+	public static final int SORT_BY_TITLE = 2;
+
 	private FavoritesAdapter mRecyclerAdapter = null;
 	private RecyclerView mRecyclerView = null;
 
 	private boolean hasSortTitleAsc = true;
 	private boolean hasSortDateAsc  = true;
+
+	private int currentSortType = SORT_BY_DATE;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +38,33 @@ public class FavoritesActivity extends BaseActivity implements MvpView {
 
 		initContentView(R.layout.favorites_activity);
 
-		MvpPresenter.getInstance().requestFavoritesSortByDateDesc(this);
+		if (savedInstanceState == null) {
+			MvpPresenter.getInstance().requestFavoritesSortByDateDesc(this);
+		} else {
+			restoreFromBundle(savedInstanceState);
+		}
+	}
+
+	@Override
+	protected void onRestart() {
+		Log.i("FavoritesActivity", "onRestart: " + MvpPresenter.getInstance().getLastDbQueryUri());
+		super.onRestart();
+
+		// Request the previous query on restart when navigating back from detail view
+		MvpPresenter.getInstance().requestLoaderManagerForDbQuery(
+				this,
+				MvpPresenter.getInstance().getLastDbQueryUri()
+		);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		Log.i("FavoritesActivity", "onSaveInstanceState");
+		super.onSaveInstanceState(outState);
+
+		outState.putInt(SORT_BY_KEY, currentSortType);
+		outState.putBoolean(TITLE_SORT_KEY, !hasSortTitleAsc);
+		outState.putBoolean(DATE_SORT_KEY, !hasSortDateAsc);
 	}
 
 	@Override
@@ -80,7 +115,9 @@ public class FavoritesActivity extends BaseActivity implements MvpView {
 
 	public void onSortByTitleClicked(View view) {
 		closeFloatingActionMenu(view);
+
 		hasSortTitleAsc = !hasSortTitleAsc;
+		currentSortType = SORT_BY_TITLE;
 
 		if (hasSortTitleAsc) {
 			MvpPresenter.getInstance().requestFavoritesSortByTitleDesc(this);
@@ -91,7 +128,9 @@ public class FavoritesActivity extends BaseActivity implements MvpView {
 
 	public void onSortByDateClicked(View view) {
 		closeFloatingActionMenu(view);
+
 		hasSortDateAsc = !hasSortDateAsc;
+		currentSortType = SORT_BY_DATE;
 
 		if (hasSortDateAsc) {
 			MvpPresenter.getInstance().requestFavoritesSortByDateDesc(this);
@@ -112,5 +151,20 @@ public class FavoritesActivity extends BaseActivity implements MvpView {
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 		mRecyclerView.setAdapter(mRecyclerAdapter);
+	}
+
+	private void restoreFromBundle(final Bundle bundle) {
+		currentSortType = bundle.getInt(SORT_BY_KEY, SORT_BY_DATE);
+		hasSortTitleAsc = bundle.getBoolean(TITLE_SORT_KEY, hasSortTitleAsc);
+		hasSortDateAsc  = bundle.getBoolean(DATE_SORT_KEY, hasSortDateAsc);
+
+		switch (currentSortType) {
+			case SORT_BY_DATE:
+				onSortByDateClicked(null);
+				break;
+			case SORT_BY_TITLE:
+				onSortByTitleClicked(null);
+				break;
+		}
 	}
 }

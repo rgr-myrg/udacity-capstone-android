@@ -19,7 +19,10 @@ public class HomeActivity extends BaseActivity implements MvpView {
 		super.onCreate(savedInstanceState);
 
 		initContentView(R.layout.home_activity);
-		MvpPresenter.getInstance().requestItemsFromDb(this);
+
+		if (savedInstanceState == null) {
+			MvpPresenter.getInstance().requestItemsFromDb(this);
+		}
 	}
 
 	@Override

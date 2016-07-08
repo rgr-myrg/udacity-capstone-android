@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,7 +123,7 @@ public class HomeAdapter extends RecyclerView.Adapter {
 							}
 					);
 
-			itemTitle.setText(data.getTitle());
+			itemTitle.setText(Html.fromHtml(data.getTitle()));
 
 			cardView.setOnClickListener(new View.OnClickListener() {
 				@Override

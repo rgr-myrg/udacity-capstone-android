@@ -135,7 +135,7 @@ public class DetailFragment extends Fragment {
 			);
 		}
 
-		header.setText(data.getTitle());
+		header.setText(Html.fromHtml(data.getTitle()));
 		pali.setText(Html.fromHtml(data.getPali()));
 		english.setText(Html.fromHtml(data.getEnglish()));
 	}

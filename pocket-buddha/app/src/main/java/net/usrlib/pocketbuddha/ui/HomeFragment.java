@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.usrlib.pocketbuddha.R;
+import net.usrlib.pocketbuddha.mvp.MvpModel;
 
 /**
  * Created by rgr-myrg on 6/26/16.
@@ -22,6 +23,7 @@ public class HomeFragment extends Fragment implements BaseFragment {
 	private RecyclerView mRecyclerView = null;
 	private HomeAdapter mRecyclerAdapter = null;
 	private boolean mIsTablet = false;
+	private int position = 0;
 
 	@Nullable
 	@Override
@@ -30,7 +32,25 @@ public class HomeFragment extends Fragment implements BaseFragment {
 							 @Nullable Bundle savedInstanceState) {
 		mRootView = inflater.inflate(R.layout.home_recycler_view, container, false);
 
+		if (savedInstanceState != null) {
+			position = savedInstanceState.getInt(MvpModel.POSITION_KEY, 0);
+		}
+
 		return mRootView;
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		if (outState == null) {
+			return;
+		}
+
+		outState.putInt(
+				MvpModel.POSITION_KEY,
+				mRecyclerAdapter != null ? mRecyclerAdapter.getPosition() : 0
+		);
 	}
 
 	@Override
@@ -66,6 +86,10 @@ public class HomeFragment extends Fragment implements BaseFragment {
 		mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 		mRecyclerView.setHasFixedSize(true);
 		mRecyclerView.setAdapter(mRecyclerAdapter);
+
+		if (position > 0) {
+			mRecyclerView.getLayoutManager().scrollToPosition(position - 1);
+		}
 	}
 
 	private void setIsTablet() {

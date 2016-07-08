@@ -25,13 +25,15 @@ import net.usrlib.pocketbuddha.util.BitmapUtil;
 /**
  * Created by rgr-myrg on 6/7/16.
  */
-public class HomeAdapter extends RecyclerView.Adapter {
+public class HomeAdapter extends RecyclerView.Adapter implements BaseAdapter {
 	public static final String NAME = HomeAdapter.class.getSimpleName();
 
 	private LayoutInflater mInflater = null;
 	private BaseFragment mFragment = null;
 	private Context mContext = null;
 	private Cursor mCursor = null;
+
+	private int mPosition = 0;
 
 	public HomeAdapter(final BaseFragment fragment, final Context mContext, final Cursor cursor) {
 		this.mInflater = LayoutInflater.from(mContext);
@@ -57,6 +59,7 @@ public class HomeAdapter extends RecyclerView.Adapter {
 		final MvpModel data = getItem(position);
 
 		if (data != null && position >= 0 && position < mCursor.getCount()) {
+			mPosition = position;
 			viewHolder.bindData(data);
 		}
 	}
@@ -94,6 +97,11 @@ public class HomeAdapter extends RecyclerView.Adapter {
 		mCursor.moveToPosition(position);
 
 		return MvpModel.fromDbCursor(mCursor);
+	}
+
+	@Override
+	public int getPosition() {
+		return mPosition;
 	}
 
 	private class ViewHolder extends RecyclerView.ViewHolder {

@@ -32,7 +32,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	private static DbHelper sInstance = null;
 
-	public DbHelper(Context context) {
+	private DbHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
 	}
 
@@ -53,7 +53,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
-	public static DbHelper getInstance(final Context context) {
+	public static synchronized DbHelper getInstance(final Context context) {
 		// Use application context, to prevent accidentally leaking an Activity's context.
 		// See this article for more information: http://bit.ly/6LRzfx
 		if (sInstance == null && context != null) {

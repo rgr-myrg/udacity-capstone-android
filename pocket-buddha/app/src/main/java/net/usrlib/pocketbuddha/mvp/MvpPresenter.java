@@ -319,7 +319,6 @@ public class MvpPresenter {
 				mvpView
 		);
 
-		// TODO: Does loader need a restart if already started for subsequent searches?
 		loaderManager.initLoader(MvpModel.DB_SEARCH_LOADER_ID, null, loaderHelper);
 	}
 

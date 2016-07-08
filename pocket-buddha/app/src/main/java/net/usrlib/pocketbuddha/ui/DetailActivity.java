@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.MenuItem;
 
 import net.usrlib.pocketbuddha.R;
 import net.usrlib.pocketbuddha.mvp.MvpModel;
@@ -92,9 +91,9 @@ public class DetailActivity extends BaseActivity implements MvpView {
 		}
 
 		// Keep track of current position
-		if (mViewPager != null) {
-			mAdapterPosition = mViewPager.getCurrentItem();
-		}
+		//if (mViewPager != null) {
+		//	mAdapterPosition = mViewPager.getCurrentItem();
+		//}
 
 		final int msgId = mData.isFavorite()
 				? R.string.msg_favorite_success
@@ -111,8 +110,8 @@ public class DetailActivity extends BaseActivity implements MvpView {
 			}
 		}
 
-		Log.d("DETAIL", "invoking requestResults");
-		requestResults(mLastIntent);
+		//Log.d("DETAIL", "invoking requestResults");
+		//requestResults(mLastIntent);
 	}
 
 	@Override

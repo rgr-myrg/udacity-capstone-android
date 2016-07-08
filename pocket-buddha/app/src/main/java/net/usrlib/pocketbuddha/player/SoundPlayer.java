@@ -72,7 +72,11 @@ public class SoundPlayer {
 		return mMediaPlayer == null || mHasPlayStart && mMediaPlayer.isPlaying();
 	}
 
-//	public boolean hasPlayStart() {
+	public boolean isLoaded() {
+		return mIsLoaded;
+	}
+
+	//	public boolean hasPlayStart() {
 //		return mHasPlayStart;
 //	}
 //
@@ -97,6 +101,15 @@ public class SoundPlayer {
 
 		mIsPaused = true;
 		mMediaPlayer.pause();
+	}
+
+	public void unPause() {
+		if (mMediaPlayer == null) {
+			return;
+		}
+
+		mIsPaused = false;
+		play();
 	}
 
 //	public void togglePlaystate() {

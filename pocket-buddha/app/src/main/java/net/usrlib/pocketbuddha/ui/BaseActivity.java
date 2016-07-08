@@ -159,6 +159,22 @@ public class BaseActivity extends AppCompatActivity
 		return true;
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (mSoundPlayer != null && mSoundPlayer.isPlaying()) {
+			mSoundPlayer.pause();
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (mSoundPlayer != null && mSoundPlayer.isLoaded()) {
+			mSoundPlayer.unPause();
+		}
+	}
+
 	public MvpModel getItem(final int position) {
 		if (mCursor == null) {
 			return null;
@@ -231,7 +247,6 @@ public class BaseActivity extends AppCompatActivity
 
 	public void onFavoriteItClicked(View view) {
 		mData = getItem(mAdapterPosition);
-
 		mData.setFavorite(!mData.isFavorite());
 
 		toggleFavoriteIcon(view, mData);

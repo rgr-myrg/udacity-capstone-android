@@ -26,15 +26,21 @@
 		android:name="net.usrlib.android.pocketbuddha.view.DetailFragment"
 		android:layout_width="0dp"
 		android:layout_height="match_parent"
-		android:layout_weight="1">
+		android:layout_weight="1"
+		android:layout_gravity="center_horizontal">
 
 		<TextView
 			android:id="@+id/detail_container_default_message"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center"
+			android:layout_marginTop="@dimen/recycler_view_margin_top"
+			android:layout_marginStart="@dimen/activity_horizontal_margin"
+			android:layout_marginLeft="@dimen/activity_horizontal_margin"
+			android:paddingTop="@dimen/activity_vertical_margin"
+			android:layout_gravity="top"
+			android:gravity="center_horizontal"
 			style="@style/Base.TextAppearance.AppCompat.Medium"
-			android:text="EMPTY" />
+			android:text="@string/msg_select_items" />
 
 	</FrameLayout>
 

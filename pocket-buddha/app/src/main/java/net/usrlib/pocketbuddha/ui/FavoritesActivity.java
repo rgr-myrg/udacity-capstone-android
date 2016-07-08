@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import net.usrlib.pocketbuddha.R;
 import net.usrlib.pocketbuddha.mvp.MvpModel;
@@ -69,6 +70,14 @@ public class FavoritesActivity extends BaseActivity implements MvpView {
 
 	@Override
 	public void onTransactionCursorReady(Cursor cursor) {
+		final TextView emptyView = (TextView) findViewById(R.id.favorites_list_recycler_empty);
+
+		if (cursor.getCount() == 0) {
+			emptyView.setVisibility(View.VISIBLE);
+		} else {
+			emptyView.setVisibility(View.GONE);
+		}
+
 		initRecyclerViewAndAdapter(cursor);
 	}
 

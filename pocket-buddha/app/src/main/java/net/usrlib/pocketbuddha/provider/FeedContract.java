@@ -82,4 +82,13 @@ public final class FeedContract {
 		public static final int URI_TYPE_FAVORITES_BY_DATE_ASC   = 105;
 		public static final int URI_TYPE_FAVORITES_BY_DATE_DESC  = 106;
 	}
+
+	public static final class NotesEntry implements BaseColumns {
+		public static final String TABLE_NAME = "notes";
+		public static final String ITEM_ID_COLUMN = "item_id";
+		public static final String COMMENT_COLUMN = "comment";
+		public static final String LIKES_COLUMN   = "likes_count";
+		public static final String DELETED_COLUMN = "deleted";
+		public static final String TIMESTAMP_COLUMN = "timestamp";
+	}
 }

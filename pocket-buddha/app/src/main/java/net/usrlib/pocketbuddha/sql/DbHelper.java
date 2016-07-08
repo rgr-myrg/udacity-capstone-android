@@ -40,6 +40,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(FeedItemsTable.CREATE_TABLE);
 		db.execSQL(PaliWordsTable.CREATE_TABLE);
+		db.execSQL(NotesTable.CREATE_TABLE);
 		db.execSQL(FeedItemsTrigger.CREATE_TRIGGER);
 	}
 
@@ -47,6 +48,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL(FeedItemsTable.DROP_TABLE);
 		db.execSQL(PaliWordsTable.DROP_TABLE);
+		db.execSQL(NotesTable.DROP_TABLE);
 		db.execSQL(FeedItemsTrigger.DROP_TRIGGER);
 		onCreate(db);
 	}

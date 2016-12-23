@@ -30,13 +30,13 @@ import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-import net.usrlib.pocketbuddha.util.TrackerUtil;
 import net.usrlib.pocketbuddha.R;
 import net.usrlib.pocketbuddha.mvp.MvpModel;
 import net.usrlib.pocketbuddha.mvp.MvpPresenter;
 import net.usrlib.pocketbuddha.player.SoundPlayer;
 import net.usrlib.pocketbuddha.util.IntentUtil;
 import net.usrlib.pocketbuddha.util.SnackbarUtil;
+import net.usrlib.pocketbuddha.util.TrackerUtil;
 
 /**
  * Created by rgr-myrg on 6/11/16.
@@ -263,14 +263,11 @@ public class BaseActivity extends AppCompatActivity
 			return;
 		}
 
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				SnackbarUtil.showMessage(
-						mRootView,
-						getString(msgId)
-				);
-			}
+		runOnUiThread(() -> {
+			SnackbarUtil.showMessage(
+					mRootView,
+					getString(msgId)
+			);
 		});
 	}
 
@@ -340,26 +337,20 @@ public class BaseActivity extends AppCompatActivity
 	}
 
 	public void onMp3StreamReady(final View view, final FloatingActionButton button) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				button.hideProgress();
-				closeFloatingActionMenu(view);
-			}
+		runOnUiThread(() -> {
+			button.hideProgress();
+			closeFloatingActionMenu(view);
 		});
 	}
 
 	public void onMp3StreamError(final View view, final FloatingActionButton button) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				button.hideProgress();
-				closeFloatingActionMenu(view);
-				SnackbarUtil.showMessage(
-						mRootView,
-						getString(R.string.msg_play_error)
-				);
-			}
+		runOnUiThread(() -> {
+			button.hideProgress();
+			closeFloatingActionMenu(view);
+			SnackbarUtil.showMessage(
+					mRootView,
+					getString(R.string.msg_play_error)
+			);
 		});
 	}
 

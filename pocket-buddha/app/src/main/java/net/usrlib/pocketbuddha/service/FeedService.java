@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.os.ResultReceiver;
 
-import net.usrlib.pocketbuddha.BuildConfig;
 import net.usrlib.pocketbuddha.util.HttpResponse;
 
 /**

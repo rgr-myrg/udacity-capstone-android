@@ -3,18 +3,15 @@ package net.usrlib.pocketbuddha.mvp;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import net.usrlib.pattern.TinyEvent;
-import net.usrlib.pocketbuddha.BuildConfig;
 import net.usrlib.pocketbuddha.provider.FeedContract;
 import net.usrlib.pocketbuddha.provider.SearchContract;
 import net.usrlib.pocketbuddha.provider.WordContract;
@@ -51,76 +48,76 @@ public class MvpPresenter {
 		return mLastDbQueryUri;
 	}
 
-	public void requestFeedDownloadService(final AppCompatActivity app) {
-		requestEndPointTransaction(
-				app,
-				BuildConfig.FEED_PAGER_END_POINT,
-				TransactionType.DOWNLOAD_FEED_ITEMS_SERVICE
-		);
-	}
+//	public void requestFeedDownloadService(final AppCompatActivity app) {
+//		requestEndPointTransaction(
+//				app,
+//				BuildConfig.FEED_PAGER_END_POINT,
+//				TransactionType.DOWNLOAD_FEED_ITEMS_SERVICE
+//		);
+//	}
+//
+//	public void requestDictionaryDownloadService(final AppCompatActivity app) {
+//		requestEndPointTransaction(
+//				app,
+//				BuildConfig.PALI_TERMS_END_POINT,
+//				TransactionType.DOWNLOAD_DICTIONARY_SERVICE
+//		);
+//	}
 
-	public void requestDictionaryDownloadService(final AppCompatActivity app) {
-		requestEndPointTransaction(
-				app,
-				BuildConfig.PALI_TERMS_END_POINT,
-				TransactionType.DOWNLOAD_DICTIONARY_SERVICE
-		);
-	}
+//	public void requestEndPointTransaction(final AppCompatActivity app,
+//	                                       final String url,
+//	                                       final TransactionType type) {
+//		final MvpView mvpView = (MvpView) app;
+//
+//		mFeedReceiver = new FeedReceiver(new Handler());
+//		mFeedReceiver.setCallback(new FeedReceiver.OnReceiveResult() {
+//			@Override
+//			public void onComplete(int resultCode, Bundle resultData) {
+//				switch (resultCode) {
+//					case FeedService.FINISHED:
+//						Log.i(NAME, "onComplete invoking onTransactionSuccess");
+//						mvpView.onTransactionSuccess(
+//								type,
+//								resultData
+//						);
+//
+//						break;
+//
+//					case FeedService.ERROR:
+//						Log.i(NAME, "onComplete invoking onTransactionError");
+//						mvpView.onTransactionError(type);
+//						break;
+//				}
+//			}
+//		});
+//
+//		final Intent intent = new Intent(Intent.ACTION_SYNC, null, app, FeedService.class);
+//
+//		intent.putExtra(FeedReceiver.NAME, mFeedReceiver);
+//		intent.putExtra(FeedService.COMMAND_KEY, FeedService.FETCH_COMMAND);
+//		intent.putExtra(FeedService.END_POINT_KEY, url);
+//
+//		app.startService(intent);
+//
+//		mvpView.onTransactionProgress(type);
+//	}
 
-	public void requestEndPointTransaction(final AppCompatActivity app,
-	                                       final String url,
-	                                       final TransactionType type) {
-		final MvpView mvpView = (MvpView) app;
-
-		mFeedReceiver = new FeedReceiver(new Handler());
-		mFeedReceiver.setCallback(new FeedReceiver.OnReceiveResult() {
-			@Override
-			public void onComplete(int resultCode, Bundle resultData) {
-				switch (resultCode) {
-					case FeedService.FINISHED:
-						Log.i(NAME, "onComplete invoking onTransactionSuccess");
-						mvpView.onTransactionSuccess(
-								type,
-								resultData
-						);
-
-						break;
-
-					case FeedService.ERROR:
-						Log.i(NAME, "onComplete invoking onTransactionError");
-						mvpView.onTransactionError(type);
-						break;
-				}
-			}
-		});
-
-		final Intent intent = new Intent(Intent.ACTION_SYNC, null, app, FeedService.class);
-
-		intent.putExtra(FeedReceiver.NAME, mFeedReceiver);
-		intent.putExtra(FeedService.COMMAND_KEY, FeedService.FETCH_COMMAND);
-		intent.putExtra(FeedService.END_POINT_KEY, url);
-
-		app.startService(intent);
-
-		mvpView.onTransactionProgress(type);
-	}
-
-	public void requestBulkInsertWithFeedItems(final AppCompatActivity app, final Bundle data) {
-		requestDbBulkInsert(
-				app,
-				data,
-				TransactionType.DB_FEED_ITEMS_BULK_INSERT
-		);
-	}
-
-	public void requestBulkInsertWithDictionaryItems(final AppCompatActivity app,
-	                                                 final Bundle data) {
-		requestDbBulkInsert(
-				app,
-				data,
-				TransactionType.DB_DICTIONARY_BULK_INSERT
-		);
-	}
+//	public void requestBulkInsertWithFeedItems(final AppCompatActivity app, final Bundle data) {
+//		requestDbBulkInsert(
+//				app,
+//				data,
+//				TransactionType.DB_FEED_ITEMS_BULK_INSERT
+//		);
+//	}
+//
+//	public void requestBulkInsertWithDictionaryItems(final AppCompatActivity app,
+//	                                                 final Bundle data) {
+//		requestDbBulkInsert(
+//				app,
+//				data,
+//				TransactionType.DB_DICTIONARY_BULK_INSERT
+//		);
+//	}
 
 	public void requestItemsFromDb(final AppCompatActivity app) {
 		requestLoaderManagerForDbQuery(app, FeedContract.ItemsEntry.CONTENT_URI);
@@ -150,7 +147,7 @@ public class MvpPresenter {
 		);
 	}
 
-	public void requestDbBulkInsert(final AppCompatActivity app,
+	public int requestDbBulkInsert(final AppCompatActivity app,
 	                                final Bundle data,
 	                                final TransactionType type) {
 		final MvpView mvpView = (MvpView) app;
@@ -158,14 +155,14 @@ public class MvpPresenter {
 
 		if (data == null || data == Bundle.EMPTY || contentResolver == null) {
 			mvpView.onTransactionError(type);
-			return;
+			return -1;
 		}
 
 		final String jsonDataString = data.getString(FeedService.DATA_RESULT);
 
 		if (jsonDataString == null) {
 			mvpView.onTransactionError(type);
-			return;
+			return -1;
 		}
 
 		Uri uri = null;
@@ -191,7 +188,7 @@ public class MvpPresenter {
 
 		if (uri == null || values == null) {
 			mvpView.onTransactionError(type);
-			return;
+			return -1;
 		}
 
 		Log.i(NAME, "requestDbBulkInsert " + uri);
@@ -209,7 +206,10 @@ public class MvpPresenter {
 			);
 		} else {
 			mvpView.onTransactionError(type);
+			return -1;
 		}
+
+		return rowCount;
 	}
 
 	public void requestItemUpdate(final AppCompatActivity app, final MvpModel data) {

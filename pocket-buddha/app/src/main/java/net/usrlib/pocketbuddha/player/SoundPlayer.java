@@ -2,6 +2,7 @@ package net.usrlib.pocketbuddha.player;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -91,7 +92,11 @@ public class SoundPlayer {
 
 		mHasPlayStart = true;
 		mIsPaused = false;
-		mMediaPlayer.start();
+		try {
+			mMediaPlayer.start();
+		} finally {
+			Log.e("SoundPlayer", "Error restarting player.");
+		}
 	}
 
 	public void pause() {
@@ -108,8 +113,10 @@ public class SoundPlayer {
 			return;
 		}
 
-		mIsPaused = false;
-		play();
+		if (mIsPaused) {
+			mIsPaused = false;
+			play();
+		}
 	}
 
 //	public void togglePlaystate() {

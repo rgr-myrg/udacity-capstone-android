@@ -11,6 +11,8 @@
 		android:id="@+id/splash_screen_imageview"
 		android:layout_width="@dimen/splash_screen_image_size"
 		android:layout_height="@dimen/splash_screen_image_size"
+		android:layout_gravity="center"
+		android:src="@drawable/happy_monk_275x275"
 		android:contentDescription="@string/content_home_description"/>
 
 	<TextView
